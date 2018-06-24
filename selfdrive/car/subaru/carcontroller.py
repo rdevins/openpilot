@@ -67,79 +67,9 @@ class CarController(object):
 
       apply_steer = int(round(apply_steer))
       self.apply_steer_last = apply_steer
-      idx = (frame / P.STEER_STEP) % 4
+      idx = (frame / P.STEER_STEP) % 8 #counts from 0 to 7 then back to 0
 
       
       can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, apply_steer, idx, lkas_enabled))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
-	
-	'''
-	commands only old:
-class CarController(object):
-  def __init__(self, dbc_name, enable_camera=True):
-    self.enable_camera = enable_camera
-    self.packer = CANPacker(dbc_name)
-
-  def update(self, sendcan, enabled, CS, frame, actuators):
-  if not self.enable_camera:
-      return
-	  
-    STEER_MAX = 0x3FF
-    apply_steer = int(clip(-actuators.steer * STEER_MAX, -STEER_MAX, STEER_MAX))
-    lkas_active = enabled and not CS.steer_not_allowed
-    can_sends = []
-    idx = frame % 4
-    can_sends.append(subarucan.create_steering_control(self.packer, apply_steer, lkas_active, CS.CP.carFingerprint, idx))
-
-    sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
-
-    '''
-	
-	
-'''
-from collections import namedtuple
-import os
-from selfdrive.boardd.boardd import can_list_to_can_capnp
-from selfdrive.controls.lib.drive_helpers import rate_limit
-from common.numpy_fast import clip
-from . import subarucan
-from .values import AH
-from common.fingerprints import SUBARU as CAR
-from selfdrive.can.packer import CANPacker
-
-
-
-class CarController(object):
-  def __init__(self, dbc_name, enable_camera=True):
-    self.enable_camera = enable_camera
-    self.packer = CANPacker(dbc_name)
-
-  def update(self, sendcan, enabled, CS, frame, actuators):
-
-    """ Controls thread """
-
-    if not self.enable_camera:
-      return
-
-    # **** process the car messages ****
-
-    # *** compute control surfaces ***
-    STEER_MAX = 0x3FF
-
-    # steer torque is converted back to CAN reference (positive when steering right)
-    apply_steer = int(clip(-actuators.steer * STEER_MAX, -STEER_MAX, STEER_MAX))
-
-    # any other cp.vl[0x18F]['STEER_STATUS'] is common and can happen during user override. sending 0 torque to avoid EPS sending error 5
-    lkas_active = enabled and not CS.steer_not_allowed
-
-    # Send CAN commands.
-    can_sends = []
-
-    # Send steering command.
-    idx = frame % 4
-    can_sends.append(subarucan.create_steering_control(self.packer, apply_steer, lkas_active, CS.CP.carFingerprint, idx))
-
-    sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
-	'''
-	
