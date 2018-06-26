@@ -72,13 +72,13 @@ class CarInterface(object):
     tireStiffnessRear_outback = 90000
     centerToRear = ret.wheelbase - ret.centerToFront
 
-	if candidate == CAR.VOLT:
-        ret.mass = mass_outback
-        ret.safetyModel = car.CarParams.SafetyModels.subaru
-        ret.wheelbase = wheelbase_outback
-        ret.centerToFront = centerToFront_outback
-        ret.steerRatio = 14
-        ret.rotationalInertia = rotationalInertia_outback * \
+    if candidate == CAR.OUTBACK:
+      ret.mass = mass_outback
+      ret.safetyModel = car.CarParams.SafetyModels.subaru
+      ret.wheelbase = wheelbase_outback
+      ret.centerToFront = centerToFront_outback
+      ret.steerRatio = 14
+      ret.rotationalInertia = rotationalInertia_outback * \
                             ret.mass * ret.wheelbase**2 / (mass_outback * wheelbase_outback**2)
 
     ret.tireStiffnessFront = tireStiffnessFront_outback * \
