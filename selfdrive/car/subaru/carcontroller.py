@@ -30,7 +30,8 @@ class CarController(object):
     # an appropriate CAN bus number.
     self.canbus = canbus
     self.params = CarControllerParams(car_fingerprint)
-    self.packer_ch = CANPacker(DBC[car_fingerprint]['powertrain'])
+    print(DBC)
+    self.packer_pt = CANPacker(DBC[car_fingerprint]['pt'])
 
   def update(self, sendcan, enabled, CS, frame, actuators, ):
     """ Controls thread """
@@ -69,7 +70,8 @@ class CarController(object):
       self.apply_steer_last = apply_steer
       idx = (frame / P.STEER_STEP) % 8 #counts from 0 to 7 then back to 0
 
+      left3 = 1
       
-      can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, apply_steer, idx, lkas_enabled))
+      can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, apply_steer, idx, left3, lkas_enabled))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())

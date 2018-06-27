@@ -1,6 +1,6 @@
-def create_steering_control(packer, bus, apply_steer, idx, lkas_active):
+def create_steering_control(packer, bus, apply_steer, idx, left_3, lkas_active):
 
-  values = 
+  values = {
     "RollingCounter": idx, #needs to count from 0 to 7, incrementing by 1 for every message sent. After 7, reset to 0
     "LKAS_Output": apply_steer,
     "Left_Turn_Is_3": left_3, #needs if statement implemented somewhere when LKAS_Output is a negative value

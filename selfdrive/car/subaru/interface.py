@@ -33,8 +33,8 @@ class CarInterface(object):
     # *** init the major players ***
     canbus = CanBus()
     self.CS = CarState(CP, canbus)
+    self.VM = VehicleModel(CP)
     self.pt_cp = get_powertrain_can_parser(CP, canbus)
-    self.ch_cp_dbc_name = DBC[CP.carFingerprint]['powertrain']
 
     # sending if read only is False
     if sendcan is not None:
@@ -72,13 +72,13 @@ class CarInterface(object):
     tireStiffnessRear_outback = 90000
     centerToRear = ret.wheelbase - ret.centerToFront
 
-    if candidate == CAR.OUTBACK:
-      ret.mass = mass_outback
-      ret.safetyModel = car.CarParams.SafetyModels.subaru
-      ret.wheelbase = wheelbase_outback
-      ret.centerToFront = centerToFront_outback
-      ret.steerRatio = 14
-      ret.rotationalInertia = rotationalInertia_outback * \
+
+    ret.mass = mass_outback
+    ret.safetyModel = car.CarParams.SafetyModels.subaru
+    ret.wheelbase = wheelbase_outback
+    ret.centerToFront = centerToFront_outback
+    ret.steerRatio = 14
+    ret.rotationalInertia = rotationalInertia_outback * \
                             ret.mass * ret.wheelbase**2 / (mass_outback * wheelbase_outback**2)
 
     ret.tireStiffnessFront = tireStiffnessFront_outback * \
@@ -132,7 +132,7 @@ class CarInterface(object):
     ret.vEgo = self.CS.v_ego
     ret.aEgo = self.CS.a_ego
     ret.vEgoRaw = self.CS.v_ego_raw
-    ret.yawRate = self.VM.yaw_rate(self.CS.angle_steers * CV.DEG_TO_RAD, self.CS.v_ego)
+    #ret.yawRate = self.VM.yaw_rate(self.CS.angle_steers * CV.DEG_TO_RAD, self.CS.v_ego)
     ret.standstill = self.CS.standstill
 
     # steering wheel
@@ -186,8 +186,6 @@ class CarInterface(object):
     # cast to reader so it can't be modified
     return ret.as_reader()
 
- def apply(self, c):
-
+  def apply(self, c):
     self.CC.update(self.sendcan, c.enabled, self.CS, self.frame, c.actuators)
-
     self.frame += 1
