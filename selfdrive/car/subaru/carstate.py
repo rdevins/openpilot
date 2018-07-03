@@ -3,23 +3,22 @@ from cereal import car
 from common.kalman.simple_kalman import KF1D
 from selfdrive.config import Conversions as CV
 from selfdrive.can.parser import CANParser
-from selfdrive.car.subaru.values import DBC, CAR, \
-                                    CruiseButtons
+from selfdrive.car.subaru.values import DBC, CAR
 
 def get_powertrain_can_parser(CP, canbus):
   # this function generates lists for signal, messages and initial values
   signals = [
     # sig_name, sig_address, default
-    #("LEFT_BLINKER", "Dashlights", 0), 
-    #("RIGHT_BLINKER", "Dashlights", 0),
+    ("LEFT_BLINKER", "Dashlights", 0), 
+    ("RIGHT_BLINKER", "Dashlights", 0),
     ("Cruise_Activated", "ES_Status", 0),
     ("Steering_Angle", "Steering", 0),
     ("FL", "WHEEL_SPEEDS", 0), 
     ("FR", "WHEEL_SPEEDS", 0),
     ("RL", "WHEEL_SPEEDS", 0), 
     ("RR", "WHEEL_SPEEDS", 0), 
-    ("Steer_Torque", "ES_LKAS", 0),
-    #("LKAS_Request", "ES_LKAS", 0), 
+    ("Steer_Torque_Sensor", "Steering_Torque", 0),
+    #("LKAS_Output", "ES_LKAS", 0), 
   ]
 
   return CANParser(DBC[CP.carFingerprint]['pt'], signals, [], canbus.powertrain)
@@ -33,7 +32,6 @@ class CarState(object):
     self.prev_left_blinker_on = False
     self.right_blinker_on = False
     self.prev_right_blinker_on = False
-    self.cruise_buttons = CruiseButtons.UNPRESS
 
     # vEgo kalman filter
     dt = 0.01
@@ -49,6 +47,8 @@ class CarState(object):
     self.prev_cruise_buttons = self.cruise_buttons
     self.cruise_buttons = pt_cp.vl["ES_Status"]['Cruise_Activated']
 
+    self.can_valid = True
+    
     self.v_wheel_fl = pt_cp.vl["WHEEL_SPEEDS"]['FL'] * CV.KPH_TO_MS
     self.v_wheel_fr = pt_cp.vl["WHEEL_SPEEDS"]['FR'] * CV.KPH_TO_MS
     self.v_wheel_rl = pt_cp.vl["WHEEL_SPEEDS"]['RL'] * CV.KPH_TO_MS
@@ -61,24 +61,15 @@ class CarState(object):
     self.a_ego = float(v_ego_x[1])
 
     self.standstill = self.v_ego_raw < 0.01
-    #self.steer_not_allowed = not is_eps_status_ok(self.lkas_status, self.car_fingerprint)
-    self.steer_not_allowed = False
 
     self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
-    #self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
-    self.steer_torque_driver = pt_cp.vl["Steering"]['Steering_Angle']
-    self.steer_override = abs(self.steer_torque_driver) > 1.0
-
-    self.can_valid = True
+    self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
+    self.steer_override = abs(self.steer_torque_driver) > 500.0
 
     self.prev_left_blinker_on = self.left_blinker_on
     self.prev_right_blinker_on = self.right_blinker_on
-    #self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
-    #self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 2
-
-    self.main_on = pt_cp.vl["ES_Status"]['Cruise_Activated']
-    self.acc_active = False
+    self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
+    self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 2
 
     if self.car_fingerprint == CAR.OUTBACK:
-      self.main_on = False
       self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']

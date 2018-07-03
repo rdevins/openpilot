@@ -17,8 +17,6 @@ class CanBus(object):
   def __init__(self):
     self.powertrain = 0
     self.obstacle = 1
-    self.chassis = 2
-    self.sw_gmlan = 3
 
 class CarInterface(object):
   def __init__(self, CP, sendcan=None):

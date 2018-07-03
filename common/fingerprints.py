@@ -62,3 +62,89 @@ def eliminate_incompatible_cars(msg, candidate_cars):
 def all_known_cars():
   """Returns a list of all known car strings."""
   return _FINGERPRINTS.keys()
+
+  # for usb controller
+def fingerprint(logcan):
+  import selfdrive.messaging as messaging
+  from cereal import car
+  from common.realtime import sec_since_boot
+  import os
+  if os.getenv("SIMULATOR") is not None or logcan is None:
+    # send message
+    ret = car.CarParams.new_message()
+
+    ret.carName = "simulator"
+    ret.carFingerprint = "THE LOW QUALITY SIMULATOR"
+
+    #ret.enableSteer = True
+    #ret.enableBrake = True
+    #ret.enableGas = True
+    #ret.enableCruise = False
+
+    #ret.wheelBase = 2.67
+    #ret.steerRatio = 15.3
+    #ret.slipFactor = 0.0014
+
+    ret.steerKpDEPRECATED, ret.steerKiDEPRECATED = 12.0, 1.0
+    return ret
+
+  print "waiting for fingerprint..."
+  brake_only = True
+
+  candidate_cars = all_known_cars()
+  finger = {}
+  st = None
+  while 1:
+    for a in messaging.drain_sock(logcan, wait_for_one=True):
+      if st is None:
+        st = sec_since_boot()
+      for can in a.can:
+        # pedal
+        if can.address == 0x201 and can.src == 0:
+          brake_only = False
+        if can.src == 0:
+          finger[can.address] = len(can.dat)
+        candidate_cars = eliminate_incompatible_cars(can, candidate_cars)
+
+    # if we only have one car choice and it's been 100ms since we got our first message, exit
+    if len(candidate_cars) == 1 and st is not None and (sec_since_boot()-st) > 0.1:
+      break
+    elif len(candidate_cars) == 0:
+      print map(hex, finger.keys())
+      raise Exception("car doesn't match any fingerprints")
+
+  print "fingerprinted", candidate_cars[0]
+
+  # send message
+  ret = car.CarParams.new_message()
+
+  ret.carName = "subaru"
+  ret.carFingerprint = candidate_cars[0]
+
+  #ret.enableSteer = True
+  #ret.enableBrake = True
+  #ret.enableGas = not brake_only
+  #ret.enableCruise = brake_only
+  #ret.enableCruise = False
+
+  #ret.wheelBase = 2.67
+  #ret.steerRatio = 15.3
+  #ret.slipFactor = 0.0014
+
+  if candidate_cars[0] == "HONDA CIVIC 2016 TOURING":
+    ret.steerKp, ret.steerKi = 12.0, 1.0
+  elif candidate_cars[0] == "ACURA ILX 2016 ACURAWATCH PLUS":
+    if not brake_only:
+      # assuming if we have an interceptor we also have a torque mod
+      ret.steerKp, ret.steerKi = 6.0, 0.5
+    else:
+      ret.steerKp, ret.steerKi = 12.0, 1.0
+  elif candidate_cars[0] == "HONDA ACCORD 2016 TOURING":
+    ret.steerKp, ret.steerKi = 12.0, 1.0
+  elif candidate_cars[0] == "SUBARU XV ACTIVE 2018":
+  # FIXME: add real values
+    ret.steerKpDEPRECATED, ret.steerKiDEPRECATED = 12.0, 1.0
+  else:
+    raise ValueError("unsupported car %s" % candidate_cars[0])
+
+  return ret
