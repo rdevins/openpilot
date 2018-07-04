@@ -44,9 +44,6 @@ class CarState(object):
   def update(self, pt_cp):
 
     self.can_valid = pt_cp.can_valid
-    self.prev_cruise_buttons = self.cruise_buttons
-    self.cruise_buttons = pt_cp.vl["ES_Status"]['Cruise_Activated']
-
     self.can_valid = True
     
     self.v_wheel_fl = pt_cp.vl["WHEEL_SPEEDS"]['FL'] * CV.KPH_TO_MS
