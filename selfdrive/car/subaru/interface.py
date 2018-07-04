@@ -5,7 +5,7 @@ from selfdrive.config import Conversions as CV
 from selfdrive.controls.lib.drive_helpers import create_event, EventTypes as ET
 from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.car.subaru.values import DBC, CAR
-from selfdrive.car.subaru.carstate import CarState, CruiseButtons, get_powertrain_can_parser
+from selfdrive.car.subaru.carstate import CarState, get_powertrain_can_parser
 
 try:
   from selfdrive.car.subaru.carcontroller import CarController
@@ -94,22 +94,8 @@ class CarInterface(object):
 
     ret.steerMaxBP = [0.] # m/s
     ret.steerMaxV = [1.]
-    ret.gasMaxBP = [0.]
-    ret.gasMaxV = [.5]
-    ret.brakeMaxBP = [0.]
-    ret.brakeMaxV = [1.]
-    ret.longPidDeadzoneBP = [0.]
-    ret.longPidDeadzoneV = [0.]
-
-    ret.longitudinalKpBP = [5., 35.]
-    ret.longitudinalKpV = [2.4, 1.5]
-    ret.longitudinalKiBP = [0.]
-    ret.longitudinalKiV = [0.36]
 
     ret.steerLimitAlert = True
-
-    ret.stoppingControl = True
-    ret.startAccel = 0.8
 
     ret.steerActuatorDelay = 0.1  # Default delay, not measured yet
     ret.steerRateCost = 0.5
@@ -130,7 +116,7 @@ class CarInterface(object):
     ret.vEgo = self.CS.v_ego
     ret.aEgo = self.CS.a_ego
     ret.vEgoRaw = self.CS.v_ego_raw
-    #ret.yawRate = self.VM.yaw_rate(self.CS.angle_steers * CV.DEG_TO_RAD, self.CS.v_ego)
+    ret.yawRate = self.VM.yaw_rate(self.CS.angle_steers * CV.DEG_TO_RAD, self.CS.v_ego)
     ret.standstill = self.CS.standstill
 
     # steering wheel
