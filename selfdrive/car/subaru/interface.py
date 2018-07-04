@@ -23,8 +23,6 @@ class CarInterface(object):
     self.CP = CP
 
     self.frame = 0
-    self.gas_pressed_prev = False
-    self.brake_pressed_prev = False
     self.can_invalid_count = 0
     self.acc_active_prev = 0
 
