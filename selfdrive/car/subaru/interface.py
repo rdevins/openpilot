@@ -64,7 +64,7 @@ class CarInterface(object):
       ret.wheelbase = 2.75
       ret.steerRatio = 14
       ret.centerToFront = ret.wheelbase * 0.5 + 1
-      ret.centerToRear = ret.wheelbase * 0.5 + 1
+      
 
     # hardcoding honda civic 2016 touring params so they can be used to
     # scale unknown params for other cars
@@ -75,7 +75,7 @@ class CarInterface(object):
     rotationalInertia_civic = 2500
     tireStiffnessFront_civic = 85400
     tireStiffnessRear_civic = 90000
-
+    centerToRear = ret.wheelbase - ret.centerToFront
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
     ret.rotationalInertia = rotationalInertia_civic * \
