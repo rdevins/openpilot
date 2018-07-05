@@ -32,6 +32,10 @@ class CarState(object):
     self.prev_left_blinker_on = False
     self.right_blinker_on = False
     self.prev_right_blinker_on = False
+    #FIXME
+    self.steer_torque_driver = 0
+    self.steer_not_allowed = False
+
 
     # vEgo kalman filter
     dt = 0.01

@@ -1,4 +1,4 @@
-def create_steering_control(packer, bus, apply_steer, idx, left_3, lkas_active):
+def create_steering_control(packer, bus, apply_steer, idx, left3, lkas_request, checksum):
 
   values = {
     "Counter": idx,
