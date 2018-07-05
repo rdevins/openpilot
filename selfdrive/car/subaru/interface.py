@@ -56,34 +56,40 @@ class CarInterface(object):
 
     # TODO: gate this on detection
     ret.enableCamera = True
-	
-	
     std_cargo = 136
-    mass_outback = 3642 + std_cargo
-    wheelbase_outback = 2.75
-    centerToFront_outback = wheelbase_outback * 0.5 + 1
-    centerToRear_outback = wheelbase_outback - centerToFront_outback
-    rotationalInertia_outback = 2500
-    tireStiffnessFront_outback = 85400
-    tireStiffnessRear_outback = 90000
-    centerToRear = ret.wheelbase - ret.centerToFront
 
+    if candidate in [CAR.OUTBACK, CAR.XV2018]
+      ret.mass = 1568 + std_cargo
+      ret.safetyModel = car.CarParams.SafetyModels.subaru
+      ret.wheelbase = 2.75
+      ret.steerRatio = 14
+      ret.centerToFront = wheelbase * 0.5 + 1
+      ret.centerToRear = wheelbase - centerToFront
+      ret.centerToRear = ret.wheelbase - ret.centerToFront
 
-    ret.mass = mass_outback
-    ret.safetyModel = car.CarParams.SafetyModels.subaru
-    ret.wheelbase = wheelbase_outback
-    ret.centerToFront = centerToFront_outback
-    ret.steerRatio = 14
-    ret.rotationalInertia = rotationalInertia_outback * \
-                            ret.mass * ret.wheelbase**2 / (mass_outback * wheelbase_outback**2)
+    # hardcoding honda civic 2016 touring params so they can be used to
+    # scale unknown params for other cars
+    mass_civic = 2923./2.205 + std_cargo
+    wheelbase_civic = 2.70
+    centerToFront_civic = wheelbase_civic * 0.4
+    centerToRear_civic = wheelbase_civic - centerToFront_civic
+    rotationalInertia_civic = 2500
+    tireStiffnessFront_civic = 85400
+    tireStiffnessRear_civic = 90000
 
-    ret.tireStiffnessFront = tireStiffnessFront_outback * \
-                             ret.mass / mass_outback * \
-                             (centerToRear / ret.wheelbase) / (centerToRear_outback / wheelbase_outback)
-    ret.tireStiffnessRear = tireStiffnessRear_outback * \
-                            ret.mass / mass_outback * \
-                            (ret.centerToFront / ret.wheelbase) / (centerToFront_outback / wheelbase_outback)
+    # TODO: get actual value, for now starting with reasonable value for
+    # civic and scaling by mass and wheelbase
+    ret.rotationalInertia = rotationalInertia_civic * \
+                            ret.mass * ret.wheelbase**2 / (mass_civic * wheelbase_civic**2)
 
+    # TODO: start from empirically derived lateral slip stiffness for the civic and scale by
+    # mass and CG position, so all cars will have approximately similar dyn behaviors
+    ret.tireStiffnessFront = tireStiffnessFront_civic * \
+                             ret.mass / mass_civic * \
+                             (centerToRear / ret.wheelbase) / (centerToRear_civic / wheelbase_civic)
+    ret.tireStiffnessRear = tireStiffnessRear_civic * \
+                            ret.mass / mass_civic * \
+                            (ret.centerToFront / ret.wheelbase) / (centerToFront_civic / wheelbase_civic)
 
     # same tuning for Volt and CT6 for now
     ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
