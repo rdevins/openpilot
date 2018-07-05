@@ -36,9 +36,9 @@ BS_:
 BU_: XXX 0
 
 
-BO_ 2 Steering_Angle: 8 XXX
+BO_ 2 Steering: 8 XXX
  SG_ NEW_SIGNAL_1 : 31|4@0- (1,0) [0|65535] "" XXX
- SG_ SteeringAngle : 7|16@0- (0.1,0) [-497|500] "degree" XXX
+ SG_ Steering_Angle : 7|16@0- (0.1,0) [-497|500] "degree" XXX
  SG_ NEW_SIGNAL_6 : 24|1@1+ (1,0) [0|3] "" XXX
  SG_ Counter : 25|3@1+ (1,0) [0|15] "" XXX
  SG_ Checksum : 32|8@1+ (1,0) [0|255] "" XXX
