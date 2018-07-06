@@ -35,7 +35,7 @@ class CarState(object):
     #FIXME
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
-
+    self.main_on = False
 
     # vEgo kalman filter
     dt = 0.01
@@ -74,3 +74,4 @@ class CarState(object):
 
     if self.car_fingerprint == CAR.OUTBACK:
       self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
+      self.main_on = pt_cp.vl["ES_Status"]['Cruise_Activated']
