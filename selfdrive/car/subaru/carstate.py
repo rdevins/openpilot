@@ -18,10 +18,18 @@ def get_powertrain_can_parser(CP, canbus):
     ("RL", "WHEEL_SPEEDS", 0), 
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
-    #("LKAS_Output", "ES_LKAS", 0), 
   ]
 
-  return CANParser(DBC[CP.carFingerprint]['pt'], signals, [], canbus.powertrain)
+  checks = [
+    # sig_address, frequency
+    ("DashLights", 100),
+    ("ES_Status", 100),
+    ("Steering", 100),
+    ("WHEEL_SPEEDS", 100),
+    ("Steering_Torque", 100),
+  ]
+
+return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, canbus.powertrain)
 
 class CarState(object):
   def __init__(self, CP, canbus):
@@ -34,7 +42,7 @@ class CarState(object):
     self.prev_right_blinker_on = False
     #FIXME
     self.steer_torque_driver = 0
-    self.steer_not_allowed = False
+    self.steer_not_allowed = True
     self.main_on = False
 
     # vEgo kalman filter
