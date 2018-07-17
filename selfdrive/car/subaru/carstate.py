@@ -20,16 +20,7 @@ def get_powertrain_can_parser(CP, canbus):
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
   ]
 
-  checks = [
-    # sig_address, frequency
-    ("DashLights", 100),
-    ("ES_Status", 100),
-    ("Steering", 100),
-    ("WHEEL_SPEEDS", 100),
-    ("Steering_Torque", 100),
-  ]
-
-  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, canbus.powertrain)
+  return CANParser(DBC[CP.carFingerprint]['pt'], signals, canbus.powertrain)
 
 class CarState(object):
   def __init__(self, CP, canbus):
@@ -63,23 +54,38 @@ class CarState(object):
     self.v_wheel_rl = pt_cp.vl["WHEEL_SPEEDS"]['RL'] * CV.KPH_TO_MS
     self.v_wheel_rr = pt_cp.vl["WHEEL_SPEEDS"]['RR'] * CV.KPH_TO_MS
     speed_estimate = (self.v_wheel_fl + self.v_wheel_fr + self.v_wheel_rl + self.v_wheel_rr) / 4.0
+    #print("speed_estimate")
+    #print(speed_estimate)
 
     self.v_ego_raw = speed_estimate
+    # FIXME
     v_ego_x = self.v_ego_kf.update(speed_estimate)
     self.v_ego = float(v_ego_x[0])
     self.a_ego = float(v_ego_x[1])
+    #self.v_ego = speed_estimate
+    #self.a_ego = speed_estimate
+
+    #print(self.v_ego_raw)
+    #print(self.v_ego)
+    #print(self.a_ego)
 
     self.standstill = self.v_ego_raw < 0.01
 
     self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
-    self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
     self.steer_override = abs(self.steer_torque_driver) > 500.0
 
     self.prev_left_blinker_on = self.left_blinker_on
     self.prev_right_blinker_on = self.right_blinker_on
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
-    self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 2
+    self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
 
     if self.car_fingerprint == CAR.OUTBACK:
       self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
       self.main_on = pt_cp.vl["ES_Status"]['Cruise_Activated']
+      self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
+      self.steer_override = abs(self.steer_torque_driver) > 500.0
+
+    if self.car_fingerprint == CAR.XV2018:
+      self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
+      self.main_on = pt_cp.vl["ES_Status"]['Cruise_Activated']
+      self.steer_override = abs(self.steer_torque_driver) > 500.0

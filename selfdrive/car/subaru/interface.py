@@ -64,7 +64,32 @@ class CarInterface(object):
       ret.wheelbase = 2.75
       ret.steerRatio = 14
       ret.centerToFront = ret.wheelbase * 0.5 + 1
-      
+
+    # FIXME: from gm
+    ret.gasMaxBP = [0.]
+    ret.gasMaxV = [.5]
+    ret.brakeMaxBP = [0.]
+    ret.brakeMaxV = [1.]
+
+    ret.longPidDeadzoneBP = [0.]
+    ret.longPidDeadzoneV = [0.]
+
+    ret.longitudinalKpBP = [5., 35.]
+    ret.longitudinalKpV = [2.4, 1.5]
+    ret.longitudinalKiBP = [0.]
+    ret.longitudinalKiV = [0.36]
+
+    ret.steerLimitAlert = True
+
+    ret.stoppingControl = True
+    ret.startAccel = 0.8
+
+    ret.steerActuatorDelay = 0.1  # Default delay, not measured yet
+    ret.steerRateCost = 1.0
+    ret.steerControlType = car.CarParams.SteerControlType.torque
+
+    # end from gm
+
 
     # hardcoding honda civic 2016 touring params so they can be used to
     # scale unknown params for other cars
@@ -150,6 +175,10 @@ class CarInterface(object):
       be.pressed = self.CS.right_blinker_on
       buttonEvents.append(be)
 
+    be = car.CarState.ButtonEvent.new_message()
+    be.type = 'accelCruise'
+    buttonEvents.append(be)
+
 
     events = []
     if not self.CS.can_valid:
@@ -163,6 +192,15 @@ class CarInterface(object):
       events.append(create_event('pcmEnable', [ET.ENABLE]))
     if not self.CS.acc_active:
       events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
+
+    # handle button presses
+    for b in ret.buttonEvents:
+      # do enable on both accel and decel buttons
+      if b.type in ["accelCruise", "decelCruise"] and not b.pressed:
+        events.append(create_event('buttonEnable', [ET.ENABLE]))
+      # do disable on button down
+      if b.type == "cancel" and b.pressed:
+        events.append(create_event('buttonCancel', [ET.USER_DISABLE]))
 		
     ret.events = events
 
