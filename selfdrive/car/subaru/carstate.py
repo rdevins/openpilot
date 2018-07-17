@@ -19,9 +19,18 @@ def get_powertrain_can_parser(CP, canbus):
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
   ]
+  
+  checks = [
+    # sig_address, frequency
+    ("DashLights", 100),
+    ("ES_Status", 100),
+    ("Steering", 100),
+    ("WHEEL_SPEEDS", 100),
+    ("Steering_Torque", 100),
+  ]
 
-  return CANParser(DBC[CP.carFingerprint]['pt'], signals, canbus.powertrain)
-
+  return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, canbus.powertrain)
+  
 class CarState(object):
   def __init__(self, CP, canbus):
     # initialize can parser
