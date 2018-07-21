@@ -6,7 +6,7 @@ import time
 class RadarInterface(object):
   def __init__(self, CP):
     # radar
-    self.pts = {}
+    self.pts = {} #return no points
     self.delay = 0.1
 
   def update(self):
@@ -17,7 +17,7 @@ class RadarInterface(object):
     return ret
 
 if __name__ == "__main__":
-  RI = RadarInterface(None)
+  RI = RadarInterface()
   while 1:
     ret = RI.update()
     print(chr(27) + "[2J")
