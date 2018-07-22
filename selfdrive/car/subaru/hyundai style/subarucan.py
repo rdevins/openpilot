@@ -1,4 +1,4 @@
-def create_steering_control(packer, bus, apply_steer, idx, left3, lkas_request, checksum):
+def create_steering_control(packer, idx, apply_steer, left3, lkas_request, checksum):
 
   values = {
     "Counter": idx,
@@ -8,4 +8,4 @@ def create_steering_control(packer, bus, apply_steer, idx, left3, lkas_request, 
     "Checksum": checksum
   }
 
-  return packer.make_can_msg("ES_LKAS", bus, values)
+  return packer.make_can_msg("ES_LKAS", 0, values)
