@@ -5,13 +5,15 @@ from selfdrive.car.subaru.values import ECU, STATIC_MSGS
 from selfdrive.can.packer import CANPacker
 
 
-# Steer torque limits
-STEER_MAX = 240
-STEER_DELTA = 25      
-STEER_DELTA_UP = 10            # ~0.75s time to peak torque (255/50hz/0.75s)
-STEER_DELTA_DOWN = 50         # ~0.3s from peak torque to zero
-TARGET_IDS = [0x164]
-
+class CarControllerParams():
+  def __init__(self, car_fingerprint):
+    if car_fingerprint == CAR.OUTBACK:
+      self.STEER_MAX = 1500
+      self.STEER_DELTA_UP = 10          # ~0.75s time to peak torque (255/50hz/0.75s)
+      self.STEER_DELTA_DOWN = 25       # ~0.3s from peak torque to zero
+      self.STEER_DRIVER_ALLOWANCE = 50   # allowed driver torque before start limiting
+      self.STEER_DRIVER_MULTIPLIER = 4   # weight driver torque heavily
+      self.STEER_DRIVER_FACTOR = 100     # from dbc
 
 class CarController(object):
   def __init__(self, dbc_name, car_fingerprint, enable_camera):
@@ -27,9 +29,7 @@ class CarController(object):
     self.ipas_reset_counter = 0
     self.turning_inhibit = 0
     self.apply_steer_last = 0
-
-    self.fake_ecus = set()
-    if enable_camera: self.fake_ecus.add(ECU.CAM)
+    self.es_status_send = 0
     self.packer = CANPacker(dbc_name)
 
   def update(self, sendcan, enabled, CS, frame, actuators):
@@ -42,25 +42,24 @@ class CarController(object):
     
     ### STEER ###
 
-    if (frame % P.STEER_STEP) == 0:
-      final_steer = actuators.steer if enabled else 0.
-      apply_steer = final_steer * P.STEER_MAX
+    final_steer = actuators.steer if enabled else 0.
+    apply_steer = final_steer * P.STEER_MAX
 
-      # limits due to driver torque
-      driver_max_torque = P.STEER_MAX + (P.STEER_DRIVER_ALLOWANCE + CS.steer_torque_driver * P.STEER_DRIVER_FACTOR) * P.STEER_DRIVER_MULTIPLIER
-      driver_min_torque = -P.STEER_MAX + (-P.STEER_DRIVER_ALLOWANCE + CS.steer_torque_driver * P.STEER_DRIVER_FACTOR) * P.STEER_DRIVER_MULTIPLIER
-      max_steer_allowed = max(min(P.STEER_MAX, driver_max_torque), 0)
-      min_steer_allowed = min(max(-P.STEER_MAX, driver_min_torque), 0)
-      apply_steer = clip(apply_steer, min_steer_allowed, max_steer_allowed)
+    # limits due to driver torque
+    driver_max_torque = P.STEER_MAX + (P.STEER_DRIVER_ALLOWANCE + CS.steer_torque_driver * P.STEER_DRIVER_FACTOR) * P.STEER_DRIVER_MULTIPLIER
+    driver_min_torque = -P.STEER_MAX + (-P.STEER_DRIVER_ALLOWANCE + CS.steer_torque_driver * P.STEER_DRIVER_FACTOR) * P.STEER_DRIVER_MULTIPLIER
+    max_steer_allowed = max(min(P.STEER_MAX, driver_max_torque), 0)
+    min_steer_allowed = min(max(-P.STEER_MAX, driver_min_torque), 0)
+    apply_steer = clip(apply_steer, min_steer_allowed, max_steer_allowed)
 
-      # slow rate if steer torque increases in magnitude
-      if self.apply_steer_last > 0:
-        apply_steer = clip(apply_steer, max(self.apply_steer_last - P.STEER_DELTA_DOWN, -P.STEER_DELTA_UP), self.apply_steer_last + P.STEER_DELTA_UP)
-      else:
-        apply_steer = clip(apply_steer, self.apply_steer_last - P.STEER_DELTA_UP, min(self.apply_steer_last + P.STEER_DELTA_DOWN, P.STEER_DELTA_UP))
+    # slow rate if steer torque increases in magnitude
+    if self.apply_steer_last > 0:
+      apply_steer = clip(apply_steer, max(self.apply_steer_last - P.STEER_DELTA_DOWN, -P.STEER_DELTA_UP), self.apply_steer_last + P.STEER_DELTA_UP)
+    else:
+      apply_steer = clip(apply_steer, self.apply_steer_last - P.STEER_DELTA_UP, min(self.apply_steer_last + P.STEER_DELTA_DOWN, P.STEER_DELTA_UP))
 
-      apply_steer = int(round(apply_steer))
-      self.apply_steer_last = apply_steer
+    apply_steer = int(round(apply_steer))
+    self.apply_steer_last = apply_steer
 
     # Inhibits *outside of* alerts
     #    Because the Turning Indicator Status is based on Lights and not Stalk, latching is 
@@ -75,7 +74,6 @@ class CarController(object):
       apply_steer = 0
       final_steer = 0
 
-      
     can_sends = []
 
     # Limit Terminal Debugging to 5Hz
@@ -113,5 +111,17 @@ class CarController(object):
       
       if (frame % 2) == 0:
         can_sends.append(subarucan.create_steering_control(self.packer, idx, apply_steer, left3, lkas_request, checksum))
+
+      if (frame % 5) == 0:
+        es_status_send = CS.es_status
+        es_brake_send = CS.es_brake
+        es_rpm_send = CS.es_rpm
+        es_ldw_send = CS.es_ldw
+        es_throttle_send = CS.es_throttle
+        can_sends.append(subarucan.es_status(self.packer, es_status_send))
+        can_sends.append(subarucan.es_brake(self.packer, es_brake_send))
+        can_sends.append(subarucan.es_rpm(self.packer, es_rpm_send))
+        can_sends.append(subarucan.es_ldw(self.packer, es_ldw_send))
+        can_sends.append(subarucan.es_throttle(self.packer, es_throttle_send))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())

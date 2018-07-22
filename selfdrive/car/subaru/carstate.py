@@ -19,15 +19,24 @@ def get_can_parser(CP):
     ("RR", "WHEEL_SPEEDS", 0),
     ("Steering_Angle", "Steering", 0),
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
-    ("Cruise_Activated", "ES_Status", 0),
     ("LEFT_BLINKER", "Dashlights", 0), 
     ("RIGHT_BLINKER", "Dashlights", 0),
     ("Gear", "Transmission", 0),
+    ("Cruise_Activated", "ES_Status", 0),
+    ("Message", "ES_Status", 0),
+    ("Message", "ES_Brake", 0),
+    ("Message", "ES_RPM", 0),
+    ("Message", "ES_LDW", 0),
+    ("Message", "ES_CruiseThrottle", 0),
   ]
   checks = [
     # sig_address, frequency
     ("Dashlights", 10),
     ("ES_Status", 20),
+    ("ES_Brake", 20),
+    ("ES_RPM", 20),
+    ("ES_LDW", 20),
+    ("ES_CruiseThrottle", 20),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 50),
     ("Steering_Torque", 100),
@@ -117,3 +126,9 @@ class CarState(object):
     self.gear_shifter = parse_gear_shifter(can_gear, self.car_fingerprint)
 
     #For LKAS Passthrough
+    self.es_status = cp.vl["ES_Status"]['Message']
+    self.es_brake = cp.vl["ES_Brake"]['Message']
+    self.es_rpm = cp.vl["ES_RPM"]['Message']
+    self.es_ldw = cp.vl["ES_LDW"]['Message']
+    self.es_throttle = cp.vl["ES_CruiseThrottle"]['Message']
+
