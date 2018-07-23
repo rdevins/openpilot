@@ -68,7 +68,7 @@ class CarController(object):
 
       if self.car_fingerprint == CAR.OUTBACK:
 
-        if abs(actuators.steer) > 0.001:
+        if abs(actuators.steer) > 1:
           lkas_request = 1
         else :
           lkas_request = 0
@@ -80,7 +80,7 @@ class CarController(object):
           apply_steer = 0
 
         if apply_steer < 0:
-          left3 = 24
+          left3 = 3
         else:
           left3 = 0
          
