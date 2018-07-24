@@ -77,7 +77,7 @@ class CarController(object):
           lkas_request = 0
         
         #counts from 0 to 7 then back to 0
-        idx = (frame / P.STEER_STEP) % 8
+        idx = frame % 8
 
         #Max steer = 1023
         if actuators.steer < 0:
@@ -86,16 +86,16 @@ class CarController(object):
           chksm_steer = apply_steer
           
         if apply_steer < 0:
-          left3 = 3
-          chksm_left3 = 24
+          left3 = 24
         else:
           left3 = 0
           chksm_left3 = 0
           
         steer2 = (chksm_steer >> 8) & 0x7
         steer1 =  chksm_steer - (steer2 << 8)
-        checksum = (idx + steer1 + steer2 + chksm_left3 + lkas_request) % 256
-	  
+        checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
+	      byte2 = steer1 + left3
+        
       if self.car_fingerprint == CAR.XV2018:
 
         if abs(apply_steer) > 0.001:
@@ -124,6 +124,6 @@ class CarController(object):
         steer1 =  apply_steer - (steer2 << 8)
         checksum = ((idx + steer1 + steer2 + left3 + lkas_rq_checksum) % 256) + 35
 
-      can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, steer1, steer2, idx, left3, lkas_request, checksum))
+      can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, steer2, byte_2, idx, lkas_request, checksum))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
