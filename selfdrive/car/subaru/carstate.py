@@ -54,7 +54,11 @@ class CarState(object):
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
     self.main_on = False
-
+    self.es_status = 0
+    self.es_brake = 0
+    self.es_rpm = 0
+    self.es_ldw = 0
+    self.es_cruisethrottle = 0
     # vEgo kalman filter
     dt = 0.01
     self.v_ego_kf = KF1D(x0=np.matrix([[0.], [0.]]),
@@ -103,9 +107,15 @@ class CarState(object):
       self.main_on = pt_cp.vl["ES_Status"]['Cruise_On']
       self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
       self.steer_override = abs(self.steer_torque_driver) > 2500.0
+      #Forwarding attempt
+      self.es_status = pt_cp.vl["ES_Status"]['Message']
+      self.es_brake = pt_cp.vl["ES_Brake"]['Message']
+      self.es_rpm = pt_cp.vl["ES_RPM"]['Message']
+      self.es_ldw = pt_cp.vl["ES_LDW"]['Message']
+      self.es_cruisethrottle = pt_cp.vl["ES_CruiseThrottle"]['Message']
 
     if self.car_fingerprint == CAR.XV2018:
       self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
       self.main_on = pt_cp.vl["ES_Status"]['Cruise_Activated']
-
       self.steer_override = abs(self.steer_torque_driver) > 500.0
+      
