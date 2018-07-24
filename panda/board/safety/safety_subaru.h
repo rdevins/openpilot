@@ -21,6 +21,8 @@ static int subaru_tx_lin_hook(int lin_num, uint8_t *data, int len) {
 
 static int subaru_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
   
+  uint32_t addr;
+
   if (bus_num == 0) {
     return 1; // ES bus
   }
