@@ -94,7 +94,7 @@ class CarController(object):
         steer2 = (chksm_steer >> 8) & 0x7
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
-	      byte2 = steer1 + left3
+	byte2 = steer1 + left3
         
       if self.car_fingerprint == CAR.XV2018:
 
