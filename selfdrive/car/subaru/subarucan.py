@@ -1,4 +1,4 @@
-def create_steering_control(packer, bus, idx, steer1, byte2, left3, lkas_request, checksum):
+def create_steering_control(packer, bus, idx, steer2, byte2, lkas_request, checksum):
 
   values = {
     "Byte0": idx,
