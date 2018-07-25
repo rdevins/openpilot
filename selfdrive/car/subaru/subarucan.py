@@ -49,3 +49,11 @@ def create_es_status(packer, bus, message_status):
   }
 
   return packer.make_can_msg("ES_Status", 0, values)
+
+def create_wheel(packer, bus, message_wheel):
+
+  values = {
+    "Message": message_wheel,
+  }
+
+  return packer.make_can_msg("WHEEL_SPEEDS", 1, values)

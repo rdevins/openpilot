@@ -17,6 +17,7 @@ def get_powertrain_can_parser(CP, canbus):
     ("FR", "WHEEL_SPEEDS", 0),
     ("RL", "WHEEL_SPEEDS", 0), 
     ("RR", "WHEEL_SPEEDS", 0), 
+    ("Message", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
     ("Cruise_On", "ES_Status", 0),
     ("Message", "ES_Status", 0),
@@ -113,6 +114,7 @@ class CarState(object):
       self.es_rpm = pt_cp.vl["ES_RPM"]['Message']
       self.es_ldw = pt_cp.vl["ES_LDW"]['Message']
       self.es_cruisethrottle = pt_cp.vl["ES_CruiseThrottle"]['Message']
+      self.wheel_speeds = pt_cp.vl["WHEEL_SPEEDS"]['Message']
 
     if self.car_fingerprint == CAR.XV2018:
       self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']

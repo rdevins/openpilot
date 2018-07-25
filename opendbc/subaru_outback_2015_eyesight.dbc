@@ -49,6 +49,7 @@ BO_ 212 WHEEL_SPEEDS: 8 XXX
  SG_ RR : 48|16@1+ (0.0592,0) [0|127] "KPH" XXX
  SG_ RL : 32|16@1+ (0.0592,0) [0|255] "KPH" XXX
  SG_ FL : 0|16@1+ (0.0592,0) [2|255] "KPH" XXX
+ SG_ Message : 7|64@0+ (1,0) [0|15] "" XXX
 
 BO_ 352 ES_Brake: 8 XXX
  SG_ Counter : 48|3@1+ (1,0) [0|7] "" XXX

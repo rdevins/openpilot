@@ -96,11 +96,14 @@ class CarController(object):
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
         
-        message_status = CS.es_status
-        message_brake = CS.es_brake
-        message_rpm = CS.es_rpm
-        message_ldw = CS.es_ldw
-        message_throttle = CS.es_cruisethrottle
+        message_wheel = CS.wheel_speeds
+
+    if ((frame % 2.5) == 0:
+      message_status = CS.es_status
+      message_brake = CS.es_brake
+      message_rpm = CS.es_rpm
+      message_ldw = CS.es_ldw
+      message_throttle = CS.es_cruisethrottle
         
       if self.car_fingerprint == CAR.XV2018:
 
@@ -135,5 +138,6 @@ class CarController(object):
       can_sends.append(subarucan.create_es_ldw(self.packer_pt, canbus.powertrain, message_ldw))
       can_sends.append(subarucan.create_es_cruisethrottle(self.packer_pt, canbus.powertrain, message_throttle))
       can_sends.append(subarucan.create_es_status(self.packer_pt, canbus.powertrain, message_status))
-      
+      can_sends.append(subarucan.create_wheel(self.packer_pt, canbus.obstacle, message_wheel))
+
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
