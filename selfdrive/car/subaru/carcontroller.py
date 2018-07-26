@@ -33,7 +33,7 @@ class CarController(object):
     print(DBC)
     self.packer_pt = CANPacker(DBC[car_fingerprint]['pt'])
 
-  def update(self, sendcan, enabled, CS, frame, actuators, ):
+  def update(self, sendcan, enabled, CS, frame, actuators, CamS):
     """ Controls thread """
 
     P = self.params
@@ -97,20 +97,20 @@ class CarController(object):
         byte2 = steer2 + left3
         
         message_wheel = CS.wheel_speeds
-        '''
+        
         if ((frame*2) % 5)) == 0:
-          message_status = CS.es_status
-          message_brake = CS.es_brake
-          message_rpm = CS.es_rpm
-          message_ldw = CS.es_ldw
-          message_throttle = CS.es_cruisethrottle
+          message_brake = CamS.es_brake
+          message_rpm = CamS.es_rpm
+          message_ldw = CamS.es_ldw
+          message_throttle = CamS.es_cruisethrottle
+          message_status = CamS.es_status
           
           can_sends.append(subarucan.create_es_brake(self.packer_pt, canbus.powertrain, message_brake))
           can_sends.append(subarucan.create_es_rpm(self.packer_pt, canbus.powertrain, message_rpm))
           can_sends.append(subarucan.create_es_ldw(self.packer_pt, canbus.powertrain, message_ldw))
           can_sends.append(subarucan.create_es_cruisethrottle(self.packer_pt, canbus.powertrain, message_throttle))
           can_sends.append(subarucan.create_es_status(self.packer_pt, canbus.powertrain, message_status))
-        '''
+        
       if self.car_fingerprint == CAR.XV2018:
 
         if abs(apply_steer) > 0.001:

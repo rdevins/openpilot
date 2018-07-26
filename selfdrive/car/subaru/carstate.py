@@ -11,7 +11,6 @@ def get_powertrain_can_parser(CP, canbus):
     # sig_name, sig_address, default
     ("LEFT_BLINKER", "Dashlights", 0), 
     ("RIGHT_BLINKER", "Dashlights", 0),
-    ("Cruise_Activated", "ES_Status", 0),
     ("Steering_Angle", "Steering", 0),
     ("FL", "WHEEL_SPEEDS", 0), 
     ("FR", "WHEEL_SPEEDS", 0),
@@ -19,22 +18,11 @@ def get_powertrain_can_parser(CP, canbus):
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Message", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
-    ("Cruise_On", "ES_Status", 0),
-    ("Message", "ES_Status", 0),
-    ("Message", "ES_Brake", 0),
-    ("Message", "ES_RPM", 0),
-    ("Message", "ES_LDW", 0),
-    ("Message", "ES_CruiseThrottle", 0),
   ]
   
   checks = [
     # sig_address, frequency
     ("Dashlights", 10),
-    ("ES_Status", 20),
-    ("ES_Brake", 20),
-    ("ES_RPM", 20),
-    ("ES_LDW", 20),
-    ("ES_CruiseThrottle", 20),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 50),
     ("Steering_Torque", 100),
@@ -104,20 +92,9 @@ class CarState(object):
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
 
     if self.car_fingerprint == CAR.OUTBACK:
-      self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
-      self.main_on = pt_cp.vl["ES_Status"]['Cruise_On']
       self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
       self.steer_override = abs(self.steer_torque_driver) > 2500.0
-      #Forwarding attempt
-      self.es_status = pt_cp.vl["ES_Status"]['Message']
-      self.es_brake = pt_cp.vl["ES_Brake"]['Message']
-      self.es_rpm = pt_cp.vl["ES_RPM"]['Message']
-      self.es_ldw = pt_cp.vl["ES_LDW"]['Message']
-      self.es_cruisethrottle = pt_cp.vl["ES_CruiseThrottle"]['Message']
-      self.wheel_speeds = pt_cp.vl["WHEEL_SPEEDS"]['Message']
 
     if self.car_fingerprint == CAR.XV2018:
-      self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
-      self.main_on = pt_cp.vl["ES_Status"]['Cruise_Activated']
       self.steer_override = abs(self.steer_torque_driver) > 500.0
       
