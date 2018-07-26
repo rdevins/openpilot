@@ -159,7 +159,7 @@ class CarInterface(object):
     ret.steeringTorque = self.CS.steer_torque_driver
 
     # cruise state
-    ret.cruiseState.available = bool(self.CS.main_on)
+    ret.cruiseState.available = bool(self.CamS.main_on)
     ret.leftBlinker = self.CS.left_blinker_on
     ret.rightBlinker = self.CS.right_blinker_on
 
@@ -192,9 +192,9 @@ class CarInterface(object):
     else:
       self.can_invalid_count = 0
 
-    if self.CS.acc_active and not self.acc_active_prev:
+    if self.CamS.acc_active and not self.acc_active_prev:
       events.append(create_event('pcmEnable', [ET.ENABLE]))
-    if not self.CS.acc_active:
+    if not self.CamS.acc_active:
       events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
     # handle button presses
@@ -209,7 +209,7 @@ class CarInterface(object):
     ret.events = events
 
     # update previous brake/gas pressed
-    self.acc_active_prev = self.CS.acc_active
+    self.acc_active_prev = self.CamS.acc_active
 
 
     # cast to reader so it can't be modified
