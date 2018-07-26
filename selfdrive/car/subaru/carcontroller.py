@@ -144,6 +144,5 @@ class CarController(object):
         checksum = ((idx + steer1 + steer2 + left3 + lkas_rq_checksum) % 256) + 35
       
       can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, idx, steer1, byte2, lkas_request, checksum))
-      can_sends.append(subarucan.create_wheel(self.packer_pt, canbus.obstacle, message_wheel))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
