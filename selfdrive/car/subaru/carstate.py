@@ -90,7 +90,8 @@ class CarState(object):
     self.prev_right_blinker_on = self.right_blinker_on
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
-
+    self.wheel_speeds = pt_cp.vl["WHEEL_SPEEDS"]['Message']
+    
     if self.car_fingerprint == CAR.OUTBACK:
       self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
       self.steer_override = abs(self.steer_torque_driver) > 2500.0
