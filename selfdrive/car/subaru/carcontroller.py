@@ -98,7 +98,11 @@ class CarController(object):
         
         message_wheel = CS.wheel_speeds
         
-        if ((frame*2) % 5)) == 0:
+        if self.counter >= 40:
+          self.counter = 0
+        else:
+          self.counter += 1
+        if self.counter == 0:
           message_brake = CamS.es_brake
           message_rpm = CamS.es_rpm
           message_ldw = CamS.es_ldw
