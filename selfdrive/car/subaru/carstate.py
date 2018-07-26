@@ -43,11 +43,7 @@ class CarState(object):
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
     self.main_on = False
-    self.es_status = 0
-    self.es_brake = 0
-    self.es_rpm = 0
-    self.es_ldw = 0
-    self.es_cruisethrottle = 0
+    self.wheel_speeds = 0
     # vEgo kalman filter
     dt = 0.01
     self.v_ego_kf = KF1D(x0=np.matrix([[0.], [0.]]),
@@ -90,11 +86,11 @@ class CarState(object):
     self.prev_right_blinker_on = self.right_blinker_on
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
-    self.wheel_speeds = pt_cp.vl["WHEEL_SPEEDS"]['Message']
     
     if self.car_fingerprint == CAR.OUTBACK:
       self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
       self.steer_override = abs(self.steer_torque_driver) > 2500.0
+      self.wheel_speeds = pt_cp.vl["WHEEL_SPEEDS"]['Message']
 
     if self.car_fingerprint == CAR.XV2018:
       self.steer_override = abs(self.steer_torque_driver) > 500.0

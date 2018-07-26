@@ -43,8 +43,8 @@ class CarController(object):
     canbus = self.canbus
 
     ### STEER ###
-
-    if (frame % P.STEER_STEP) == 0:
+    # 100hz
+    if (frame % P.STEER_STEP) == 0: 
       final_steer = actuators.steer if enabled else 0.
       apply_steer = final_steer * P.STEER_MAX
 
@@ -76,10 +76,10 @@ class CarController(object):
         else :
           lkas_request = 0
         
-        #counts from 0 to 7 then back to 0
+        # counts from 0 to 7 then back to 0
         idx = (frame % P.STEER_STEP) % 8
 
-        #Max steer = 1023
+        # Max steer = 1023
         if actuators.steer < 0:
           chksm_steer = 1024-abs(apply_steer)
         else:
@@ -96,9 +96,12 @@ class CarController(object):
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
         
+        # 50hz
+        if (frame % 2) == 0: 
         message_wheel = CS.wheel_speeds
-        
-        if (frame % 3) == 0: #33hz
+
+        # 33hz
+        if (frame % 3) == 0: 
           message_brake = CamS.es_brake
           message_rpm = CamS.es_rpm
           message_ldw = CamS.es_ldw
@@ -120,7 +123,7 @@ class CarController(object):
           lkas_request = 0
           lkas_rq_checksum = 0
 
-        #counts from 0 to 15 then back to 0
+        # counts from 0 to 15 then back to 0
         idx = (frame / P.STEER_STEP) % 16
 
         if not lkas_enabled:
@@ -128,7 +131,7 @@ class CarController(object):
 
         left3 = 1
         
-        #max_steer 4095 
+        # max_steer 4095 
 
         if apply_steer < 0:
           chksm_steer = 4096-abs(steer)
