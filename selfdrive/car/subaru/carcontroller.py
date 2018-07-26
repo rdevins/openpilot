@@ -25,6 +25,7 @@ class CarController(object):
     self.steer_idx = 0
     self.apply_steer_last = 0
     self.car_fingerprint = car_fingerprint
+    
 
     # Setup detection helper. Routes commands to
     # an appropriate CAN bus number.
@@ -99,6 +100,8 @@ class CarController(object):
         # 50hz
         if (frame % 2) == 0: 
           message_wheel = CS.wheel_speeds
+          can_sends.append(subarucan.create_wheel(self.packer_pt, canbus.obstacle, self.message_wheel))
+
 
         # 33hz
         if (frame % 3) == 0: 
