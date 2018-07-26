@@ -97,14 +97,20 @@ class CarController(object):
         byte2 = steer2 + left3
         
         message_wheel = CS.wheel_speeds
-
-    if ((frame % 2.5) == 0:
-      message_status = CS.es_status
-      message_brake = CS.es_brake
-      message_rpm = CS.es_rpm
-      message_ldw = CS.es_ldw
-      message_throttle = CS.es_cruisethrottle
-        
+        '''
+        if ((frame*2) % 5)) == 0:
+          message_status = CS.es_status
+          message_brake = CS.es_brake
+          message_rpm = CS.es_rpm
+          message_ldw = CS.es_ldw
+          message_throttle = CS.es_cruisethrottle
+          
+          can_sends.append(subarucan.create_es_brake(self.packer_pt, canbus.powertrain, message_brake))
+          can_sends.append(subarucan.create_es_rpm(self.packer_pt, canbus.powertrain, message_rpm))
+          can_sends.append(subarucan.create_es_ldw(self.packer_pt, canbus.powertrain, message_ldw))
+          can_sends.append(subarucan.create_es_cruisethrottle(self.packer_pt, canbus.powertrain, message_throttle))
+          can_sends.append(subarucan.create_es_status(self.packer_pt, canbus.powertrain, message_status))
+        '''
       if self.car_fingerprint == CAR.XV2018:
 
         if abs(apply_steer) > 0.001:
@@ -132,12 +138,8 @@ class CarController(object):
         steer2 = (apply_steer >> 8) & 0x5
         steer1 =  apply_steer - (steer2 << 8)
         checksum = ((idx + steer1 + steer2 + left3 + lkas_rq_checksum) % 256) + 35
+      
       can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, idx, steer1, byte2, lkas_request, checksum))
-      can_sends.append(subarucan.create_es_brake(self.packer_pt, canbus.powertrain, message_brake))
-      can_sends.append(subarucan.create_es_rpm(self.packer_pt, canbus.powertrain, message_rpm))
-      can_sends.append(subarucan.create_es_ldw(self.packer_pt, canbus.powertrain, message_ldw))
-      can_sends.append(subarucan.create_es_cruisethrottle(self.packer_pt, canbus.powertrain, message_throttle))
-      can_sends.append(subarucan.create_es_status(self.packer_pt, canbus.powertrain, message_status))
       can_sends.append(subarucan.create_wheel(self.packer_pt, canbus.obstacle, message_wheel))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())

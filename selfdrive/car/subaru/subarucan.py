@@ -8,7 +8,7 @@ def create_steering_control(packer, bus, idx, steer2, byte2, lkas_request, check
     "Checksum": checksum,
   }
 
-  return packer.make_can_msg("ES_LKAS", 0, values)
+  return packer.make_can_msg("ES_LKAS", bus, values)
 
 def create_es_brake(packer, bus, message_brake):
 
@@ -16,7 +16,7 @@ def create_es_brake(packer, bus, message_brake):
     "Message": message_brake,
   }
 
-  return packer.make_can_msg("ES_Brake", 0, values)
+  return packer.make_can_msg("ES_Brake", bus, values)
 
 def create_es_rpm(packer, bus, message_rpm):
 
@@ -24,7 +24,7 @@ def create_es_rpm(packer, bus, message_rpm):
     "Message": message_rpm,
   }
 
-  return packer.make_can_msg("ES_RPM", 0, values)
+  return packer.make_can_msg("ES_RPM", bus, values)
 
 def create_es_ldw(packer, bus, message_ldw):
 
@@ -32,7 +32,7 @@ def create_es_ldw(packer, bus, message_ldw):
     "Message": message_ldw,
   }
 
-  return packer.make_can_msg("ES_LDW", 0, values)
+  return packer.make_can_msg("ES_LDW", bus, values)
 
 def create_es_cruisethrottle(packer, bus, message_ct):
 
@@ -40,7 +40,7 @@ def create_es_cruisethrottle(packer, bus, message_ct):
     "Message": message_ct,
   }
 
-  return packer.make_can_msg("ES_CruiseThrottle", 0, values)
+  return packer.make_can_msg("ES_CruiseThrottle", bus, values)
 
 def create_es_status(packer, bus, message_status):
 
@@ -48,7 +48,7 @@ def create_es_status(packer, bus, message_status):
     "Message": message_status,
   }
 
-  return packer.make_can_msg("ES_Status", 0, values)
+  return packer.make_can_msg("ES_Status", bus, values)
 
 def create_wheel(packer, bus, message_wheel):
 
@@ -56,4 +56,4 @@ def create_wheel(packer, bus, message_wheel):
     "Message": message_wheel,
   }
 
-  return packer.make_can_msg("WHEEL_SPEEDS", 1, values)
+  return packer.make_can_msg("WHEEL_SPEEDS", bus, values)
