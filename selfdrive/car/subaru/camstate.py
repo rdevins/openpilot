@@ -31,7 +31,14 @@ class CamState(object):
   def __init__(self, CP, canbus):
     # initialize can parser
     self.car_fingerprint = CP.carFingerprint
-    
+    self.es_status = 0
+    self.es_brake = 0
+    self.es_rpm = 0
+    self.es_ldw = 0
+    self.es_cruisethrottle = 0
+    self.acc_active = 0
+    self.main_on = 0
+      
   def update(self, pt_cp):
 
     self.can_valid = pt_cp.can_valid
