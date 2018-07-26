@@ -30,7 +30,7 @@ class CarInterface(object):
     # *** init the major players ***
     canbus = CanBus()
     self.CS = CarState(CP, canbus)
-    self.CamS = CamState(CP)
+    self.CamS = CamState(CP, canbus)
     self.VM = VehicleModel(CP)
     self.pt_cp = get_powertrain_can_parser(CP, canbus)
     self.ob_cp = get_obstacle_can_parser(CP, canbus)
