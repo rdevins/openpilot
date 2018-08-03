@@ -18,10 +18,13 @@ def get_powertrain_can_parser(CP, canbus):
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Message", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
+    ("Cruise_Activated", "ES_Status", 0),
+    ("Cruise_On", "ES_Status", 0),
   ]
   
   checks = [
     # sig_address, frequency
+    ("ES_Status", 20),
     ("Dashlights", 10),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 50),
@@ -42,7 +45,6 @@ class CarState(object):
     #FIXME
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
-    self.main_on = False
     self.wheel_speeds = 0
     # vEgo kalman filter
     dt = 0.01
@@ -91,6 +93,9 @@ class CarState(object):
       self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
       self.steer_override = abs(self.steer_torque_driver) > 2500.0
       self.wheel_speeds = pt_cp.vl["WHEEL_SPEEDS"]['Message']
+      self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
+      self.main_on = pt_cp.vl["ES_Status"]['Cruise_On']
+
 
     if self.car_fingerprint == CAR.XV2018:
       self.steer_override = abs(self.steer_torque_driver) > 500.0

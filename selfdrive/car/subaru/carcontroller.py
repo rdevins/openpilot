@@ -95,7 +95,7 @@ class CarController(object):
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
-        
+        '''
         # 50hz
         if (frame % 2) == 0: 
           message_wheel = CS.wheel_speeds
@@ -114,7 +114,7 @@ class CarController(object):
           can_sends.append(subarucan.create_es_ldw(self.packer_pt, canbus.powertrain, message_ldw))
           can_sends.append(subarucan.create_es_cruisethrottle(self.packer_pt, canbus.powertrain, message_throttle))
           can_sends.append(subarucan.create_es_status(self.packer_pt, canbus.powertrain, message_status))
-        
+        '''
       if self.car_fingerprint == CAR.XV2018:
 
         if abs(apply_steer) > 0.001:

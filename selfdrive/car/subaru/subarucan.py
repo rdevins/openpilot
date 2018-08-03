@@ -9,7 +9,7 @@ def create_steering_control(packer, bus, idx, steer2, byte2, lkas_request, check
   }
 
   return packer.make_can_msg("ES_LKAS", bus, values)
-
+'''
 def create_es_brake(packer, bus, message_brake):
 
   values = {
@@ -57,3 +57,4 @@ def create_wheel(packer, bus, message_wheel):
   }
 
   return packer.make_can_msg("WHEEL_SPEEDS", bus, values)
+'''

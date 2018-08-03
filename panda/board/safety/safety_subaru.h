@@ -1,4 +1,4 @@
-// subaru Safety
+// Subaru Safety
 
 static int subaru_ign_hook() {
   return true;
@@ -7,9 +7,7 @@ static void subaru_init(int16_t param) {
   controls_allowed = 1;
 }
 
-static int subaru_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
-  // Steering Value Safety Check
-  
+static int subaru_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {  
   return true;
 }
 
@@ -29,4 +27,3 @@ const safety_hooks subaru_hooks = {
   .ignition = subaru_ign_hook,
   .fwd = subaru_fwd_hook,
 };
-
