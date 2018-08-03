@@ -19,52 +19,30 @@ def make_can_msg(addr, dat, alt, cks=False):
   return [addr, 0, dat, alt]
 
 
-
-def create_steer_command(packer, steer, car_fingerprint, idx):
-  """Creates a CAN message for the Hyundai  Steering and LKAS UI command."""
-  lkas_hud_values = {
-    #checksum and counter are calculated elsewhere
-    'CF_Lkas_LdwsSysState' : hud.lanes,
-    'CF_Lkas_SysWarning' : hud.steer_required,
-    'CF_Lkas_LdwsLHWarning' : 0x0,
-    'CF_Lkas_LdwsRHWarning' : 0x0,
-    'CF_Lkas_HbaLamp' : 0x0,
-    'CF_Lkas_FcwBasReq' : 0x0,
-    'CR_Lkas_StrToqReq' : steer, #actual torque request
-    'CF_Lkas_ActToi': steer != 0, #the torque request bit
-    'CF_Lkas_ToiFlt' : 0x0,
-    'CF_Lkas_HbaSysState' : 0x1,
-    'CF_Lkas_FcwOpt' : 0x0,
-    'CF_Lkas_HbaOpt' : 0x1,
-    'CF_Lkas_FcwSysState' : 0x0,
-    'CF_Lkas_FcwCollisionWarning' : 0x0,
-    'CF_Lkas_FusionState' : 0x0,
-    'CF_Lkas_FcwOpt_USM' : 0x0,
-    'CF_Lkas_LdwsOpt_USM' : 0x3,
+def create_lkas11(packer, byte0, byte1, byte2, byte3, \
+  byte4, byte5, byte6, byte7):
+  """Creates a CAN message for the Hyundai LKAS11."""
+  values = {
+    'Byte0' : byte0,
+    'Byte1' : byte1,
+    'Byte2' : byte2,
+    'Byte3' : byte3,
+    'Byte4' : byte4,
+    'Byte5' : byte5,
+    'Byte6' : byte6,
+    'Byte7' : byte7,
   }
 
-  return packer.make_can_msg("LKAS11", 0, lkas_hud_values, idx)
+  return packer.make_can_msg("LKAS11", 0, values)
 
+def create_lkas12b(packer, byte0, byte1, byte2, byte3, byte4, byte5):
+  values = {
+    'Byte0' : byte0,
+    'Byte1' : byte1,
+    'Byte2' : byte2,
+    'Byte3' : byte3,
+    'Byte4' : byte4,
+    'Byte5' : byte5,
+  }
 
-def create_accel_command(packer, accel, pcm_cancel, standstill_req):
-  # TODO: find the exact canceling bit
-  #values = {
-  #  "ACCEL_CMD": accel,
-  #  "SET_ME_X63": 0x63,
-  #  "SET_ME_1": 1,
-  #  "RELEASE_STANDSTILL": not standstill_req,
-  #  "CANCEL_REQ": pcm_cancel,
-  #}
-  #return packer.make_can_msg("ACC_CONTROL", 0, values)
-  return -1
-
-
-def create_fcw_command(packer, fcw):
- # values = {
- #   "FCW": fcw,
- #   "SET_ME_X20": 0x20,
- #   "SET_ME_X10": 0x10,
- #   "SET_ME_X80": 0x80,
- # }
- # return packer.make_can_msg("ACC_HUD", 0, values)
-  return -1
+  return packer.make_can_msg("LKAS12", 0, values)

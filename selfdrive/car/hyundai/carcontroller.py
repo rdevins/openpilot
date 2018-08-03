@@ -1,222 +1,191 @@
 from common.numpy_fast import clip, interp
 from selfdrive.boardd.boardd import can_list_to_can_capnp
-from selfdrive.car.hyundai.hyundaican import make_can_msg, create_video_target,\
-                                           create_steer_command, create_ui_command, \
-                                           create_accel_command, \
-                                           create_fcw_command
-from selfdrive.car.hyundai.values import ECU, STATIC_MSGS
+from selfdrive.car.hyundai.hyundaican import make_can_msg, create_lkas11, create_lkas12b
+from selfdrive.car.hyundai.values import CAR, CHECKSUM, LKAS_FORWARD, LKAS_12
 from selfdrive.can.packer import CANPacker
 
-# Accel limits
-ACCEL_HYST_GAP = 0.02  # don't change accel command for small oscilalitons within this value
-ACCEL_MAX = 1.5  # 1.5 m/s2
-ACCEL_MIN = -3.0 # 3   m/s2
-ACCEL_SCALE = max(ACCEL_MAX, -ACCEL_MIN)
 
 # Steer torque limits
-STEER_MAX = 1500
-STEER_DELTA_UP = 10       # 1.5s time to peak torque
-STEER_DELTA_DOWN = 25     # always lower than 45 otherwise the Rav4 faults (Prius seems ok with 50)
-STEER_ERROR_MAX = 350     # max delta between torque cmd and torque motor
+STEER_MAX = 200   # Actual integer limit is 1023, but ignores >767
+STEER_MAX_ZERO = 1024
+STEER_DELTA_UP = 3
+STEER_DELTA_DOWN = 6
 
-# Steer angle limits (tested at the Crows Landing track and considered ok)
-ANGLE_MAX_BP = [0., 5.]
-ANGLE_MAX_V = [510., 300.]
-ANGLE_DELTA_BP = [0., 5., 15.]
-ANGLE_DELTA_V = [5., .8, .15]     # windup limit
-ANGLE_DELTA_VU = [5., 3.5, 0.4]   # unwind limit
-
-TARGET_IDS = [0x340, 0x381, 0x386]
-
-
-def accel_hysteresis(accel, accel_steady, enabled):
-
-  # for small accel oscillations within ACCEL_HYST_GAP, don't change the accel command
-  if not enabled:
-    # send 0 when disabled, otherwise acc faults
-    accel_steady = 0.
-  elif accel > accel_steady + ACCEL_HYST_GAP:
-    accel_steady = accel - ACCEL_HYST_GAP
-  elif accel < accel_steady - ACCEL_HYST_GAP:
-    accel_steady = accel + ACCEL_HYST_GAP
-  accel = accel_steady
-
-  return accel, accel_steady
-
-
-def process_hud_alert(hud_alert, audible_alert):
-  # initialize to no alert
-  steer = 0
-  fcw = 0
-  sound1 = 0
-  sound2 = 0
-
-  if hud_alert == 'fcw':
-    fcw = 1
-  elif hud_alert == 'steerRequired':
-    steer = 1
-
-  if audible_alert == 'chimeRepeated':
-    sound1 = 1
-  elif audible_alert in ['beepSingle', 'chimeSingle', 'chimeDouble']:
-    # TODO: find a way to send single chimes
-    sound2 = 1
-
-  return steer, fcw, sound1, sound2
+STEER_DRIVER_ALLOWANCE = 100
+STEER_DRIVER_MULTIPLIER = 1
+STEER_DRIVER_FACTOR = 100
 
 
 class CarController(object):
   def __init__(self, dbc_name, car_fingerprint, enable_camera):
     self.braking = False
-    # redundant safety check with the board
-    self.controls_allowed = False
-    self.last_steer = 0
-    self.last_angle = 0
-    self.accel_steady = 0.
+    self.controls_allowed = True
+    self.apply_steer_last = 0
     self.car_fingerprint = car_fingerprint
-    self.alert_active = False
-    self.last_standstill = False
-    self.standstill_req = False
     self.angle_control = False
-
+    self.idx = 0
+    self.lkas_request = 0
+    self.lanes = 0
     self.steer_angle_enabled = False
     self.ipas_reset_counter = 0
+    self.turning_inhibit = 0
+    self.hide_lkas_fault = 180
+    print self.car_fingerprint
 
-    self.fake_ecus = set()
-    if enable_camera: self.fake_ecus.add(ECU.CAM)
     self.packer = CANPacker(dbc_name)
 
-  def update(self, sendcan, enabled, CS, frame, actuators,
-             pcm_cancel_cmd, hud_alert, audible_alert):
+  def update(self, sendcan, enabled, CS, frame, actuators, CamS):
 
-    # *** compute control surfaces ***
+    # Steering Torque Scaling is to STEER_MAX, + STEER_MAX_ZERO for center
+    apply_steer = int(round((actuators.steer * STEER_MAX) + STEER_MAX_ZERO))
 
-    # gas and brake
-    apply_accel = actuators.gas - actuators.brake
-    apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
-    apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
+    # Driver Torque Limits - based from GM Port
+    driver_max_torque = STEER_MAX + (STEER_DRIVER_ALLOWANCE + CS.steer_torque_driver * STEER_DRIVER_FACTOR) * STEER_DRIVER_MULTIPLIER
+    driver_min_torque = -STEER_MAX + (-STEER_DRIVER_ALLOWANCE + CS.steer_torque_driver * STEER_DRIVER_FACTOR) * STEER_DRIVER_MULTIPLIER
+    max_steer_allowed = max(min(STEER_MAX, driver_max_torque), 0) + STEER_MAX_ZERO
+    min_steer_allowed = min(max(-STEER_MAX, driver_min_torque), 0) + STEER_MAX_ZERO
+    apply_steer = clip(apply_steer, min_steer_allowed, max_steer_allowed)
 
-    # steer torque
-    apply_steer = int(round(actuators.steer * STEER_MAX))
-
-    max_lim = min(max(CS.steer_torque_motor + STEER_ERROR_MAX, STEER_ERROR_MAX), STEER_MAX)
-    min_lim = max(min(CS.steer_torque_motor - STEER_ERROR_MAX, -STEER_ERROR_MAX), -STEER_MAX)
-
-    apply_steer = clip(apply_steer, min_lim, max_lim)
-
-    # slow rate if steer torque increases in magnitude
-    if self.last_steer > 0:
-      apply_steer = clip(apply_steer, max(self.last_steer - STEER_DELTA_DOWN, - STEER_DELTA_UP), self.last_steer + STEER_DELTA_UP)
+    # Torque Rate Limiting - based from GM Port
+    if self.apply_steer_last > 0:
+      apply_steer = clip(apply_steer, max(self.apply_steer_last - STEER_DELTA_DOWN, -STEER_DELTA_UP),
+                                      self.apply_steer_last + STEER_DELTA_UP)
     else:
-      apply_steer = clip(apply_steer, self.last_steer - STEER_DELTA_UP, min(self.last_steer + STEER_DELTA_DOWN, STEER_DELTA_UP))
+      apply_steer = clip(apply_steer, self.apply_steer_last - STEER_DELTA_UP,
+                                      min(self.apply_steer_last + STEER_DELTA_DOWN, STEER_DELTA_UP))
 
-    # dropping torque immediately might cause eps to temp fault. On the other hand, safety_toyota
-    # cuts steer torque immediately anyway TODO: monitor if this is a real issue
-    # only cut torque when steer state is a known fault
-    if not enabled or CS.steer_state in [9, 25]:
-      apply_steer = 0
+    # Redundant Min/Max Clipping
+    apply_steer = clip(apply_steer, STEER_MAX_ZERO - STEER_MAX, STEER_MAX_ZERO + STEER_MAX)
 
-    self.steer_angle_enabled, self.ipas_reset_counter = \
-      ipas_state_transition(self.steer_angle_enabled, enabled, CS.ipas_active, self.ipas_reset_counter)
-    #print self.steer_angle_enabled, self.ipas_reset_counter, CS.ipas_active
+    # Inhibits *outside of* alerts
+    #    Because the Turning Indicator Status is based on Lights and not Stalk, latching is 
+    #    needed for the disable to work.
+    if CS.left_blinker_on == 1 or CS.right_blinker_on == 1 or \
+            CS.left_blinker_flash == 1 or CS.right_blinker_flash == 1:
+      self.turning_inhibit = 180  # Disable for 1.8 Seconds after blinker turned off
 
-    # steer angle
-    if self.steer_angle_enabled and CS.ipas_active:
-      apply_angle = actuators.steerAngle
-      angle_lim = interp(CS.v_ego, ANGLE_MAX_BP, ANGLE_MAX_V)
-      apply_angle = clip(apply_angle, -angle_lim, angle_lim)
+    if self.turning_inhibit > 0:
+      self.turning_inhibit = self.turning_inhibit - 1
 
-      # windup slower
-      if self.last_angle * apply_angle > 0. and abs(apply_angle) > abs(self.last_angle):
-        angle_rate_lim = interp(CS.v_ego, ANGLE_DELTA_BP, ANGLE_DELTA_V)
-      else:
-        angle_rate_lim = interp(CS.v_ego, ANGLE_DELTA_BP, ANGLE_DELTA_VU)
-
-      apply_angle = clip(apply_angle, self.last_angle - angle_rate_lim, self.last_angle + angle_rate_lim)
+    if not enabled or self.turning_inhibit > 0:
+      apply_steer = STEER_MAX_ZERO     # STEER_MAX_ZERO is midpoint (no steer)
+      self.apply_steer_last = STEER_MAX_ZERO # Reset Last Steer
     else:
-      apply_angle = CS.angle_steers
+      self.lanes = 3 * 4     # bit 0 = Right Lane, bit 1 = Left Lane, Offset by 2 bits in byte.
 
-    if not enabled and CS.pcm_acc_status:
-      # send pcm acc cancel cmd if drive is disabled but pcm is still on, or if the system can't be activated
-      pcm_cancel_cmd = 1
-
-    # on entering standstill, send standstill request
-    if CS.standstill and not self.last_standstill:
-      self.standstill_req = True
-    if CS.pcm_acc_status != 8:
-      # pcm entered standstill or it's disabled
-      self.standstill_req = False
-
-    self.last_steer = apply_steer
-    self.last_angle = apply_angle
-    self.last_accel = apply_accel
-    self.last_standstill = CS.standstill
+    apply_steer = int(apply_steer)
+    self.apply_steer_last = apply_steer
 
     can_sends = []
 
-    #*** control msgs ***
-    #print "steer", apply_steer, min_lim, max_lim, CS.steer_torque_motor
+    # Index is 4 bits long, this is the counter
+    self.idx = self.idx + 1
+    if self.idx >= 16:
+      self.idx = 0
+    
+    # Byte 4 is used for Index and HBA
+    #   We generate the Index, but pass through HBA
+    lkas11_byte4 = self.idx * 16
 
-    # toyota can trace shows this message at 42Hz, with counter adding alternatively 1 and 2;
-    # sending it at 100Hz seem to allow a higher rate limit, as the rate limit seems imposed
-    # on consecutive messages
-    if ECU.CAM in self.fake_ecus:
-      if self.angle_control:
-        can_sends.append(create_steer_command(self.packer, 0., frame))
+    # Split apply steer Word into 2 Bytes
+    apply_steer_a = apply_steer & 0xFF
+    apply_steer_b = (apply_steer >> 8) & 0xFF
+
+
+    # If Request to Steer is anything but 0 torque, turn on ActToi
+    if apply_steer != STEER_MAX_ZERO:
+      apply_steer_b = apply_steer_b + 0x08
+
+
+    if LKAS_FORWARD[self.car_fingerprint]:
+      # LKAS Forward keeps as much of the factory camera features enabled as possible at 
+      #  any given time
+      if enabled:
+        # When we send Torque signals that the camera does not expet, it faults.
+        #   This masks the fault for 750ms after bringing stock back on.
+        #   This does NOT mean that the factory system will be enabled, it will still be off.
+        #      This was tested at 500ms, and 1 in 10 disables, a fault was still seen.
+        self.hide_lkas_fault = 75
+
+        # Generate the 7 bytes as needed for OP Control.
+        #   Anything we don't generate, pass through from camera
+        lkas11_byte0 = int(self.lanes) + (CamS.lkas11_b0 & 0xC3)
+        lkas11_byte1 = CamS.lkas11_b1
+        lkas11_byte2 = apply_steer_a
+        lkas11_byte3 = apply_steer_b + (CamS.lkas11_b3 & 0xE0)   # ToiFlt always comes on, don't pass it
+        lkas11_byte4 = lkas11_byte4 + (CamS.lkas11_b4 & 0x0F)    # Always use our counter
+        lkas11_byte5 = CamS.lkas11_b5
+        lkas11_byte7 = CamS.lkas11_b7
       else:
-        can_sends.append(create_steer_command(self.packer, apply_steer, frame))
-
-    if self.angle_control:
-      can_sends.append(create_ipas_steer_command(self.packer, apply_angle, self.steer_angle_enabled,
-                                                 ECU.APGS in self.fake_ecus))
-    elif ECU.APGS in self.fake_ecus:
-      can_sends.append(create_ipas_steer_command(self.packer, 0, 0, True))
-
-    # accel cmd comes from DSU, but we can spam can to cancel the system even if we are using lat only control
-    if (frame % 3 == 0 and ECU.DSU in self.fake_ecus) or (pcm_cancel_cmd and ECU.CAM in self.fake_ecus):
-      if ECU.DSU in self.fake_ecus:
-        can_sends.append(create_accel_command(self.packer, apply_accel, pcm_cancel_cmd, self.standstill_req))
-      else:
-        can_sends.append(create_accel_command(self.packer, 0, pcm_cancel_cmd, False))
-
-    if frame % 10 == 0 and ECU.CAM in self.fake_ecus:
-      for addr in TARGET_IDS:
-        can_sends.append(create_video_target(frame/10, addr))
-
-    # ui mesg is at 100Hz but we send asap if:
-    # - there is something to display
-    # - there is something to stop displaying
-    alert_out = process_hud_alert(hud_alert, audible_alert)
-    steer, fcw, sound1, sound2 = alert_out
-
-    if (any(alert_out) and not self.alert_active) or \
-       (not any(alert_out) and self.alert_active):
-      send_ui = True
-      self.alert_active = not self.alert_active
+        # Pass Through the 7 bytes so that Factory LKAS is in control
+        #   We still use our counter, because otherwise duplicates and missed messages from the camera
+        #   is possible due to the implementation method.  As such, we recreate the checksum as well
+        # Byte 0 defined below due to Fault Masking
+        lkas11_byte1 = CamS.lkas11_b1
+        lkas11_byte2 = CamS.lkas11_b2
+        # Byte 3 defined below due to Fault Masking
+        lkas11_byte4 = lkas11_byte4 + (CamS.lkas11_b4 & 0x0F)    # Always use our counter
+        lkas11_byte5 = CamS.lkas11_b5
+        lkas11_byte7 = CamS.lkas11_b7
+        # This is the Fault Masking needed in byte 0 and byte 3
+        if self.hide_lkas_fault > 0:
+          lkas11_byte0 = int(self.lanes) + (CamS.lkas11_b0 & 0xC3)
+          lkas11_byte3 = CamS.lkas11_b3 & 0xE7
+          self.hide_lkas_fault = self.hide_lkas_fault - 1
+        else:
+          lkas11_byte0 = CamS.lkas11_b0
+          lkas11_byte3 = CamS.lkas11_b3
+      # When LKAS Forward is disabled, we generate the entire LKAS message
     else:
-      send_ui = False
-
-    if (frame % 100 == 0 or send_ui) and ECU.CAM in self.fake_ecus:
-      can_sends.append(create_ui_command(self.packer, steer, sound1, sound2))
-      can_sends.append(create_fcw_command(self.packer, fcw))
-
-    #*** static msgs ***
-
-    for (addr, ecu, cars, bus, fr_step, vl) in STATIC_MSGS:
-      if frame % fr_step == 0 and ecu in self.fake_ecus and self.car_fingerprint in cars:
-        # special cases
-        if fr_step == 5 and ecu == ECU.CAM and bus == 1:
-          cnt = (((frame / 5) % 7) + 1) << 5
-          vl = chr(cnt) + vl
-        elif addr in (0x489, 0x48a) and bus == 0:
-          # add counter for those 2 messages (last 4 bits)
-          cnt = ((frame/100)%0xf) + 1
-          if addr == 0x48a:
-            # 0x48a has a 8 preceding the counter
-            cnt += 1 << 7
-          vl += chr(cnt)
-
-        can_sends.append(make_can_msg(addr, vl, bus, False))
+      lkas11_byte0 = self.lanes + 0x2
+      lkas11_byte1 = 0x00
+      lkas11_byte2 = apply_steer_a
+      lkas11_byte3 = apply_steer_b
+      lkas11_byte4 = (self.idx * 16) + 0x04
+      lkas11_byte5 = 0x00
+      lkas11_byte7 = 0x18
+        
 
 
+    # Create Checksum
+    #   Sorento and Genesis checksum is Byte 0 to 5
+    #   Other models appear to be Byte 0 to Byte 5 as well as Byte 7
+    if CHECKSUM[self.car_fingerprint]:
+      # 6 Byte Checksum
+      checksum = (lkas11_byte0 + lkas11_byte1 + lkas11_byte2 + lkas11_byte3 + \
+        lkas11_byte4 + lkas11_byte5) % 256
+    else:
+      # 7 Byte Checksum
+      checksum = (lkas11_byte0 + lkas11_byte1 + lkas11_byte2 + lkas11_byte3 + \
+        lkas11_byte4 + lkas11_byte5 + lkas11_byte7) % 256
+    
+
+
+    # Create LKAS11 Message at 100Hz
+    can_sends.append(create_lkas11(self.packer, lkas11_byte0, \
+      lkas11_byte1, lkas11_byte2, lkas11_byte3, lkas11_byte4, \
+      lkas11_byte5, checksum, lkas11_byte7))
+
+   
+
+    # Create LKAS12 Message at 10Hz
+    if (frame % 10) == 0:
+      if LKAS_12[self.car_fingerprint] == 1:
+        can_sends.append(create_lkas12b(self.packer, CamS.lkas12_b0, CamS.lkas12_b1, \
+          CamS.lkas12_b2, CamS.lkas12_b3, CamS.lkas12_b4, CamS.lkas12_b5))
+      if LKAS_12[self.car_fingerprint] == 2:
+        can_sends.append(create_lkas12b(self.packer, 0x00, 0x00, 0x00, 0x00, 0x20, 0x00))
+      if LKAS_12[self.car_fingerprint] == 3:
+        can_sends.append(create_lkas12b(self.packer, 0x00, 0x00, 0x00, 0x00, 0x80, 0x05))
+
+
+
+    # Limit Terminal Debugging to 5Hz
+    if (frame % 20) == 0:
+      print "controlsdDebug steer", actuators.steer, "strToq", CS.steer_torque_driver, "v_ego", \
+        CS.v_ego, "strAng", CS.angle_steers
+
+
+    
+    # Send messages to canbus
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
