@@ -37,7 +37,7 @@ class CamState(object):
     self.es_ldw = 0
     self.es_cruisethrottle = 0
     self.acc_active = 0
-    self.main_on = 0
+    self.main_on = False
       
   def update(self, pt_cp):
 
@@ -50,5 +50,5 @@ class CamState(object):
       self.es_rpm = pt_cp.vl["ES_RPM"]['Message']
       self.es_ldw = pt_cp.vl["ES_LDW"]['Message']
       self.es_cruisethrottle = pt_cp.vl["ES_CruiseThrottle"]['Message']
-      self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
-      self.main_on = pt_cp.vl["ES_Status"]['Cruise_On']
+        self.acc_active = pt_cp.vl["ES_Status"]['Cruise_Activated']
+        self.main_on = pt_cp.vl["ES_Status"]['Cruise_On']

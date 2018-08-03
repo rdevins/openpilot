@@ -6,7 +6,7 @@ from selfdrive.controls.lib.drive_helpers import create_event, EventTypes as ET
 from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.car.subaru.values import DBC, CAR
 from selfdrive.car.subaru.carstate import CarState, get_powertrain_can_parser
-from selfdrive.car.subaru.camstate import CamState, get_obstacle_can_parser
+#from selfdrive.car.subaru.camstate import CamState, get_obstacle_can_parser
 
 try:
   from selfdrive.car.subaru.carcontroller import CarController
@@ -33,7 +33,7 @@ class CarInterface(object):
     self.CamS = CamState(CP, canbus)
     self.VM = VehicleModel(CP)
     self.pt_cp = get_powertrain_can_parser(CP, canbus)
-    self.ob_cp = get_obstacle_can_parser(CP, canbus)
+    #self.ob_cp = get_obstacle_can_parser(CP, canbus)
 
     # sending if read only is False
     if sendcan is not None:
@@ -139,7 +139,7 @@ class CarInterface(object):
 
     self.pt_cp.update(int(sec_since_boot() * 1e9), False)
     self.CS.update(self.pt_cp)
-    self.CamS.update(self.ob_cp)
+    #self.CamS.update(self.ob_cp)
 
     # create message
     ret = car.CarState.new_message()

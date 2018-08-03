@@ -1,4 +1,4 @@
-// Subaru Safety
+// Subaru All Output
 
 static int subaru_ign_hook() {
   return true;
