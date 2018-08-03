@@ -26,6 +26,7 @@ DIMSV = 2
 XV, SPEEDV = 0, 1
 VISION_POINT = -1
 
+
 class EKFV1D(EKF):
   def __init__(self):
     super(EKFV1D, self).__init__(False)
@@ -51,7 +52,7 @@ def radard_thread(gctx=None):
   # wait for stats about the car to come in from controls
   cloudlog.info("radard is waiting for CarParams")
   CP = car.CarParams.from_bytes(Params().get("CarParams", block=True))
-  mocked = CP.carName == "mock" or CP.carName == "subaru"
+  mocked = CP.carName == "mock"
   VM = VehicleModel(CP)
   cloudlog.info("radard got CarParams")
 
@@ -137,7 +138,8 @@ def radard_thread(gctx=None):
 
     # run kalman filter only if prob is high enough
     if PP.lead_prob > 0.7:
-      ekfv.update(speedSensorV.read(PP.lead_dist, covar=PP.lead_var))
+      reading = speedSensorV.read(PP.lead_dist, covar=np.matrix(PP.lead_var))
+      ekfv.update_scalar(reading)
       ekfv.predict(tsv)
       ar_pts[VISION_POINT] = (float(ekfv.state[XV]), np.polyval(PP.d_poly, float(ekfv.state[XV])),
                               float(ekfv.state[SPEEDV]), False)
@@ -145,6 +147,7 @@ def radard_thread(gctx=None):
       ekfv.state[XV] = PP.lead_dist
       ekfv.covar = (np.diag([PP.lead_var, ekfv.var_init]))
       ekfv.state[SPEEDV] = 0.
+
       if VISION_POINT in ar_pts:
         del ar_pts[VISION_POINT]
 

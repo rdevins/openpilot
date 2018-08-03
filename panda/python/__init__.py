@@ -107,8 +107,6 @@ class Panda(object):
   SAFETY_TOYOTA = 2
   SAFETY_HONDA_BOSCH = 4
   SAFETY_HYUNDAI = 7
-  SAFETY_SUBARU = 8
-
   SAFETY_TOYOTA_NOLIMITS = 0x1336
   SAFETY_ALLOUTPUT = 0x1337
   SAFETY_ELM327 = 0xE327
@@ -537,4 +535,3 @@ class Panda(object):
     msg = self.kline_ll_recv(2, bus=bus)
     msg += self.kline_ll_recv(ord(msg[1])-2, bus=bus)
     return msg
-
