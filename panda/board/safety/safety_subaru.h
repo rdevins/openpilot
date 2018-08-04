@@ -26,8 +26,7 @@ static int subaru_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
   if (bus_num == 0) {
     return 1; // ES bus
   }
-  if (bus_num == 1) {
-    // remove ES_LKAS in forwards
+  if (bus_num == 1) { // remove ES_LKAS in forwards
    if (addr == 0x164) {
      return false;
    }

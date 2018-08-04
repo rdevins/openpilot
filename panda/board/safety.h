@@ -16,7 +16,7 @@ int max_limit_check(int val, const int MAX, const int MIN);
 int dist_to_meas_check(int val, int val_last, struct sample_t *val_meas,
   const int MAX_RATE_UP, const int MAX_RATE_DOWN, const int MAX_ERROR);
 int driver_limit_check(int val, int val_last, struct sample_t *val_driver,
-  const int MAX, const int MAX_RATE_UP, const int MAX_RATE_DOWN, 
+  const int MAX, const int MAX_RATE_UP, const int MAX_RATE_DOWN,
   const int MAX_ALLOWANCE, const int DRIVER_FACTOR);
 int rt_rate_limit_check(int val, int val_last, const int MAX_RT_DELTA);
 
