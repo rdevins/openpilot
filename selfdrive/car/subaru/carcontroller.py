@@ -25,7 +25,7 @@ class CarController(object):
     self.steer_idx = 0
     self.apply_steer_last = 0
     self.car_fingerprint = car_fingerprint
-    
+
     # Setup detection helper. Routes commands to
     # an appropriate CAN bus number.
     self.canbus = canbus
@@ -33,7 +33,7 @@ class CarController(object):
     print(DBC)
     self.packer_pt = CANPacker(DBC[car_fingerprint]['pt'])
 
-  def update(self, sendcan, enabled, CS, frame, actuators): #CamS
+  def update(self, sendcan, enabled, CS, frame, actuators, ):
     """ Controls thread """
 
     P = self.params
@@ -43,8 +43,8 @@ class CarController(object):
     canbus = self.canbus
 
     ### STEER ###
-    # 100hz
-    if (frame % P.STEER_STEP) == 0: 
+
+    if (frame % P.STEER_STEP) == 0:
       final_steer = actuators.steer if enabled else 0.
       apply_steer = final_steer * P.STEER_MAX
 
@@ -76,10 +76,10 @@ class CarController(object):
         else :
           lkas_request = 0
         
-        # counts from 0 to 7 then back to 0
-        idx = (frame % P.STEER_STEP) % 8
+        #counts from 0 to 7 then back to 0
+        idx = frame % 8
 
-        # Max steer = 1023
+        #Max steer = 1023
         if actuators.steer < 0:
           chksm_steer = 1024-abs(apply_steer)
         else:
@@ -95,26 +95,7 @@ class CarController(object):
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
-        '''
-        # 50hz
-        if (frame % 2) == 0: 
-          message_wheel = CS.wheel_speeds
-          can_sends.append(subarucan.create_wheel(self.packer_pt, canbus.obstacle, message_wheel))
-
-        # 33hz
-        if (frame % 3) == 0: 
-          message_brake = CamS.es_brake
-          message_rpm = CamS.es_rpm
-          message_ldw = CamS.es_ldw
-          message_throttle = CamS.es_cruisethrottle
-          message_status = CamS.es_status
-          
-          can_sends.append(subarucan.create_es_brake(self.packer_pt, canbus.powertrain, message_brake))
-          can_sends.append(subarucan.create_es_rpm(self.packer_pt, canbus.powertrain, message_rpm))
-          can_sends.append(subarucan.create_es_ldw(self.packer_pt, canbus.powertrain, message_ldw))
-          can_sends.append(subarucan.create_es_cruisethrottle(self.packer_pt, canbus.powertrain, message_throttle))
-          can_sends.append(subarucan.create_es_status(self.packer_pt, canbus.powertrain, message_status))
-        '''
+        
       if self.car_fingerprint == CAR.XV2018:
 
         if abs(apply_steer) > 0.001:
@@ -124,7 +105,7 @@ class CarController(object):
           lkas_request = 0
           lkas_rq_checksum = 0
 
-        # counts from 0 to 15 then back to 0
+        #counts from 0 to 15 then back to 0
         idx = (frame / P.STEER_STEP) % 16
 
         if not lkas_enabled:
@@ -132,7 +113,7 @@ class CarController(object):
 
         left3 = 1
         
-        # max_steer 4095 
+        #max_steer 4095 
 
         if apply_steer < 0:
           chksm_steer = 4096-abs(steer)
@@ -142,7 +123,7 @@ class CarController(object):
         steer2 = (apply_steer >> 8) & 0x5
         steer1 =  apply_steer - (steer2 << 8)
         checksum = ((idx + steer1 + steer2 + left3 + lkas_rq_checksum) % 256) + 35
-      
+
       can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, idx, steer1, byte2, lkas_request, checksum))
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())

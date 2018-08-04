@@ -6,7 +6,6 @@ from selfdrive.controls.lib.drive_helpers import create_event, EventTypes as ET
 from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.car.subaru.values import DBC, CAR
 from selfdrive.car.subaru.carstate import CarState, get_powertrain_can_parser
-#from selfdrive.car.subaru.camstate import CamState, get_obstacle_can_parser
 
 try:
   from selfdrive.car.subaru.carcontroller import CarController
@@ -30,10 +29,8 @@ class CarInterface(object):
     # *** init the major players ***
     canbus = CanBus()
     self.CS = CarState(CP, canbus)
-    self.CamS = CamState(CP, canbus)
     self.VM = VehicleModel(CP)
     self.pt_cp = get_powertrain_can_parser(CP, canbus)
-    #self.ob_cp = get_obstacle_can_parser(CP, canbus)
 
     # sending if read only is False
     if sendcan is not None:
@@ -139,7 +136,6 @@ class CarInterface(object):
 
     self.pt_cp.update(int(sec_since_boot() * 1e9), False)
     self.CS.update(self.pt_cp)
-    #self.CamS.update(self.ob_cp)
 
     # create message
     ret = car.CarState.new_message()
@@ -159,7 +155,7 @@ class CarInterface(object):
     ret.steeringTorque = self.CS.steer_torque_driver
 
     # cruise state
-    ret.cruiseState.available = bool(self.CamS.main_on)
+    ret.cruiseState.available = bool(self.CS.main_on)
     ret.leftBlinker = self.CS.left_blinker_on
     ret.rightBlinker = self.CS.right_blinker_on
 
@@ -192,9 +188,9 @@ class CarInterface(object):
     else:
       self.can_invalid_count = 0
 
-    if self.CamS.acc_active and not self.acc_active_prev:
+    if self.CS.acc_active and not self.acc_active_prev:
       events.append(create_event('pcmEnable', [ET.ENABLE]))
-    if not self.CamS.acc_active:
+    if not self.CS.acc_active:
       events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
     # handle button presses
@@ -209,13 +205,13 @@ class CarInterface(object):
     ret.events = events
 
     # update previous brake/gas pressed
-    self.acc_active_prev = self.CamS.acc_active
+    self.acc_active_prev = self.CS.acc_active
 
 
     # cast to reader so it can't be modified
     return ret.as_reader()
-    
-  #carcontroller called at 100hz
+
+  # car controller 100hz
   def apply(self, c):
-    self.CC.update(self.sendcan, c.enabled, self.CS, self.frame, c.actuators, self.CamS)
+    self.CC.update(self.sendcan, c.enabled, self.CS, self.frame, c.actuators)
     self.frame += 1
