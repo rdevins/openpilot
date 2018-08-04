@@ -211,7 +211,6 @@ class CarInterface(object):
     # cast to reader so it can't be modified
     return ret.as_reader()
 
-  # car controller 100hz
   def apply(self, c):
     self.CC.update(self.sendcan, c.enabled, self.CS, self.frame, c.actuators)
     self.frame += 1

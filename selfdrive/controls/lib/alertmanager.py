@@ -74,7 +74,7 @@ class AlertManager(object):
         Priority.MID, None, "beepSingle", .2, 0., 0.),
 
     "fcw": Alert(
-        "BRAKE!",
+        "Brake!",
         "Risk of Collision",
         AlertStatus.critical, AlertSize.full,
         Priority.HIGHEST, "fcw", "chimeRepeated", 1., 2., 2.),
@@ -98,52 +98,22 @@ class AlertManager(object):
         Priority.LOW, None, None, .2, .2, .2),
 
     "preDriverDistracted": Alert(
-        "KEEP EYES ON ROAD: User Appears Distracted",
+        "TAKE CONTROL: User Appears Distracted",
         "",
         AlertStatus.normal, AlertSize.small,
         Priority.LOW, "steerRequired", None, 0., .1, .1, alert_rate=0.75),
 
     "promptDriverDistracted": Alert(
-        "KEEP EYES ON ROAD",
+        "TAKE CONTROL",
         "User Appears Distracted",
         AlertStatus.userPrompt, AlertSize.mid,
         Priority.MID, "steerRequired", "chimeRepeated", .1, .1, .1),
 
     "driverDistracted": Alert(
-        "DISENGAGE IMMEDIATELY",
+        "DISENGAGEMENT REQUIRED",
         "User Was Distracted",
         AlertStatus.critical, AlertSize.full,
         Priority.HIGH, "steerRequired", "chimeRepeated", .1, .1, .1),
-
-    "preDriverUnresponsive": Alert(
-        "TOUCH STEERING WHEEL: No Driver Monitoring",
-        "",
-        AlertStatus.normal, AlertSize.small,
-        Priority.LOW, "steerRequired", None, 0., .1, .1, alert_rate=0.75),
-
-    "promptDriverUnresponsive": Alert(
-        "TOUCH STEERING WHEEL",
-        "User Is Unresponsive",
-        AlertStatus.userPrompt, AlertSize.mid,
-        Priority.MID, "steerRequired", "chimeRepeated", .1, .1, .1),
-
-    "driverUnresponsive": Alert(
-        "DISENGAGE IMMEDIATELY",
-        "User Was Unresponsive",
-        AlertStatus.critical, AlertSize.full,
-        Priority.HIGH, "steerRequired", "chimeRepeated", .1, .1, .1),
-
-    "driverMonitorOff": Alert(
-        "DRIVER MONITOR IS UNAVAILABLE",
-        "Accuracy Is Low",
-        AlertStatus.normal, AlertSize.mid,
-        Priority.LOW, None, None, .4, 0., 4.),
-
-    "driverMonitorOn": Alert(
-        "DRIVER MONITOR IS AVAILABLE",
-        "Accuracy Is High",
-        AlertStatus.normal, AlertSize.mid,
-        Priority.LOW, None, None, .4, 0., 4.),
 
     "geofence": Alert(
         "DISENGAGEMENT REQUIRED",

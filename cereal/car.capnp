@@ -63,11 +63,6 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     promptDriverDistracted @38;
     driverDistracted @39;
     geofence @40;
-    driverMonitorOn @41;
-    driverMonitorOff @42;
-    preDriverUnresponsive @43;
-    promptDriverUnresponsive @44;
-    driverUnresponsive @45;
   }
 }
 
@@ -307,9 +302,7 @@ struct CarParams {
     hondaBosch @5;
     ford @6;
     cadillac @7;
-    hyundai @8;
-    chrysler @9;
-    subaru @10;
+    subaru @8;
   }
 
   # things about the car in the manual

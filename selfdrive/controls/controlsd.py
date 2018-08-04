@@ -53,7 +53,7 @@ def data_sample(CI, CC, thermal, calibration, health, driver_monitor, gps_locati
   CS = CI.update(CC)
   events = list(CS.events)
   enabled = isEnabled(state)
-  
+
   td = None
   cal = None
   hh = None
@@ -155,7 +155,7 @@ def state_transition(CS, CP, state, events, soft_disable_timer, v_cruise_kph, AM
   soft_disable_timer = max(0, soft_disable_timer - 1)
 
   # ***** handle state transitions *****
-  
+
   # DISABLED
   if state == State.disabled:
     if get_events(events, [ET.ENABLE]):
@@ -292,7 +292,7 @@ def state_control(plan, CS, CP, state, events, v_cruise_kph, v_cruise_kph_last, 
   return actuators, v_cruise_kph, driver_status, angle_offset
 
 
-def data_send(perception_state, plan, plan_ts, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk, carstate,
+def data_send(plan, plan_ts, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk, carstate,
               carcontrol, live100, livempc, AM, driver_status,
               LaC, LoC, angle_offset, passive):
 
@@ -323,7 +323,7 @@ def data_send(perception_state, plan, plan_ts, CS, CI, CP, VM, state, events, ac
     CC.hudControl.audibleAlert = AM.audible_alert
 
     # send car controls over can
-    CI.apply(CC, perception_state)
+    CI.apply(CC)
 
   # ***** publish state to logger *****
   # publish controls state at 100Hz
@@ -337,7 +337,6 @@ def data_send(perception_state, plan, plan_ts, CS, CI, CP, VM, state, events, ac
     "alertStatus": AM.alert_status,
     "alertBlinkingRate": AM.alert_rate,
     "awarenessStatus": max(driver_status.awareness, 0.0) if isEnabled(state) else 0.0,
-    "driverMonitoringOn": bool(driver_status.monitor_on),
     "canMonoTimes": list(CS.canMonoTimes),
     "planMonoTime": plan_ts,
     "enabled": isEnabled(state),
@@ -400,7 +399,7 @@ def controlsd_thread(gctx=None, rate=100, default_bias=0.):
 
   # start the loop
   set_realtime_priority(3)
-  
+
   context = zmq.Context()
   params = Params()
 
@@ -409,7 +408,6 @@ def controlsd_thread(gctx=None, rate=100, default_bias=0.):
   carstate = messaging.pub_sock(context, service_list['carState'].port)
   carcontrol = messaging.pub_sock(context, service_list['carControl'].port)
   livempc = messaging.pub_sock(context, service_list['liveMpc'].port)
-
 
   passive = params.get("Passive") != "0"
   if not passive:
@@ -448,6 +446,7 @@ def controlsd_thread(gctx=None, rate=100, default_bias=0.):
     CP.safetyModel = car.CarParams.SafetyModels.noOutput
 
   fcw_enabled = params.get("IsFcwEnabled") == "1"
+  driver_monitor_on = params.get("IsDriverMonitoringEnabled") == "1"
   geofence = None
   try:
     from selfdrive.controls.lib.geofence import Geofence
@@ -461,14 +460,13 @@ def controlsd_thread(gctx=None, rate=100, default_bias=0.):
   VM = VehicleModel(CP)
   LaC = LatControl(VM)
   AM = AlertManager()
-  driver_status = DriverStatus()
+  driver_status = DriverStatus(driver_monitor_on)
 
   if not passive:
     AM.add("startup", False)
 
   # write CarParams
   params.put("CarParams", CP.to_bytes())
-
 
   state = State.disabled
   soft_disable_timer = 0
@@ -492,7 +490,6 @@ def controlsd_thread(gctx=None, rate=100, default_bias=0.):
       pass
 
   prof = Profiler(False)  # off by default
-
 
   while 1:
 
@@ -519,7 +516,7 @@ def controlsd_thread(gctx=None, rate=100, default_bias=0.):
     prof.checkpoint("State Control")
 
     # publish data
-    CC = data_send(PL.perception_state, plan, plan_ts, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk, carstate, carcontrol,
+    CC = data_send(plan, plan_ts, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk, carstate, carcontrol,
       live100, livempc, AM, driver_status, LaC, LoC, angle_offset, passive)
     prof.checkpoint("Sent")
 

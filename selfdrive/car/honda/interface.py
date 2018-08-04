@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import os
 import numpy as np
-from cereal import car, log
+from cereal import car
 from common.numpy_fast import clip, interp
 from common.realtime import sec_since_boot
 from selfdrive.swaglog import cloudlog
@@ -567,7 +567,7 @@ class CarInterface(object):
 
   # pass in a car.CarControl
   # to be called @ 100hz
-  def apply(self, c, perception_state=log.Live20Data.new_message()):
+  def apply(self, c):
     if c.hudControl.speedVisible:
       hud_v_cruise = c.hudControl.setSpeed * CV.MS_TO_KPH
     else:
@@ -600,7 +600,6 @@ class CarInterface(object):
       c.cruiseControl.override, \
       c.cruiseControl.cancel, \
       pcm_accel, \
-      perception_state.radarErrors, \
       hud_v_cruise, c.hudControl.lanesVisible, \
       hud_show_car = c.hudControl.leadVisible, \
       hud_alert = hud_alert, \

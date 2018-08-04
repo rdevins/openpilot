@@ -118,6 +118,7 @@ persistent_processes = [
   'uploader',
   'ui',
   'gpsd',
+  'ubloxd',
   'updated',
 ]
 
@@ -128,7 +129,7 @@ car_started_processes = [
   'radard',
   'visiond',
   'proclogd',
-  'ubloxd',
+  'orbd',
 ]
 
 def register_managed_process(name, desc, car_started=False):
@@ -296,9 +297,6 @@ def manager_thread():
 
   cloudlog.info("manager start")
   cloudlog.info({"environ": os.environ})
-
-  # save boot log
-  subprocess.call(["./loggerd", "--bootlog"], cwd=os.path.join(BASEDIR, "selfdrive/loggerd"))
 
   for p in persistent_processes:
     start_managed_process(p)
