@@ -61,7 +61,7 @@ class CarController(object):
       else:
         apply_steer = clip(apply_steer, self.apply_steer_last - P.STEER_DELTA_UP, min(self.apply_steer_last + P.STEER_DELTA_DOWN, P.STEER_DELTA_UP))
 
-      apply_steer = int(round(apply_steer * -1))
+      apply_steer = int(round(apply_steer))
       self.apply_steer_last = apply_steer
 
       lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego > 3.
@@ -70,23 +70,24 @@ class CarController(object):
           apply_steer = 0
 
       if self.car_fingerprint == CAR.OUTBACK:
-
+        
+        reverse_steer = final_steer * -1
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
 
         #Max steer = 1023
         if actuators.steer < 0:
-          chksm_steer = 1024-abs(apply_steer)
+          chksm_steer = 1024-abs(reverse_steer)
         else:
-          chksm_steer = apply_steer
+          chksm_steer = reverse_steer
 
-        if apply_steer < 0:
+        if reverse_steer < 0:
           left3 = 24
         else:
           left3 = 0
           chksm_left3 = 0
 
-        if apply_steer != 0:
+        if reverse_steer != 0:
           lkas_request = 1
         else :
           lkas_request = 0
