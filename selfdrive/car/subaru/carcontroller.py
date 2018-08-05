@@ -96,7 +96,7 @@ class CarController(object):
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
   
-      if (self.car_fingerprint == CAR.XV2018) or (self.car_fingerprint == CAR.IMREZA2017):
+      if (self.car_fingerprint == CAR.XV2018):
       
         reverse_steer = apply_steer * -1
         
