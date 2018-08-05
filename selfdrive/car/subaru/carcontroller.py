@@ -61,7 +61,7 @@ class CarController(object):
       else:
         apply_steer = clip(apply_steer, self.apply_steer_last - P.STEER_DELTA_UP, min(self.apply_steer_last + P.STEER_DELTA_DOWN, P.STEER_DELTA_UP))
 
-      apply_steer = int(round(apply_steer))
+      apply_steer = int(round(apply_steer * -1))
       self.apply_steer_last = apply_steer
 
       lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego > 3.
