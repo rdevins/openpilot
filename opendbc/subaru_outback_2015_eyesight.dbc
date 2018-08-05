@@ -235,14 +235,6 @@ BO_ 359 ES_LDW: 8 XXX
  SG_ 1Right_Depart : 48|1@1+ (1,0) [0|3] "" XXX
  SG_ Message : 0|64@1+ (1,0) [0|15] "" XXX
  
-BO_ 338 Stalk: 8 XXX
- SG_ Wiper : 62|1@0+ (1,0) [0|3] "" XXX
- SG_ brake_light : 52|1@0+ (1,0) [0|3] "" XXX
- SG_ Headlights : 59|1@0+ (1,0) [0|3] "" XXX
- SG_ Runlights : 58|1@1+ (1,0) [0|3] "" XXX
- SG_ Highbeam : 60|1@0+ (1,0) [0|3] "" XXX
- SG_ Counter : 15|4@0+ (1,0) [0|15] "" XXX
- 
 BO_ 392 Counter_0: 8 XXX
  SG_ Counter : 16|4@1+ (1,0) [0|15] "" XXX
 
