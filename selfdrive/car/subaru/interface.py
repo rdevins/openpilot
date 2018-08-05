@@ -79,14 +79,8 @@ class CarInterface(object):
     ret.longitudinalKiBP = [0.]
     ret.longitudinalKiV = [0.36]
 
-    ret.steerLimitAlert = True
-
     ret.stoppingControl = True
     ret.startAccel = 0.8
-
-    ret.steerActuatorDelay = 0.1  # Default delay, not measured yet
-    ret.steerRateCost = 1.0
-    ret.steerControlType = car.CarParams.SteerControlType.torque
 
     # end from gm
 
@@ -115,19 +109,18 @@ class CarInterface(object):
                             ret.mass / mass_civic * \
                             (ret.centerToFront / ret.wheelbase) / (centerToFront_civic / wheelbase_civic)
 
-    # same tuning for Volt and CT6 for now
+    # testing tuning
+    ret.steerActuatorDelay = 0.1
+    ret.steerRateCost = 1.0
+    ret.steerControlType = car.CarParams.SteerControlType.torque
+    ret.steerLimitAlert = True
+    
+    ret.steerKf = 0.00008   
     ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
     ret.steerKpV, ret.steerKiV = [[0.2], [0.00]]
-    ret.steerKf = 0.00004   # full torque for 20 deg at 80mph means 0.00007818594
 
     ret.steerMaxBP = [0.] # m/s
     ret.steerMaxV = [1.]
-
-    ret.steerLimitAlert = True
-
-    ret.steerActuatorDelay = 0.1  # Default delay, not measured yet
-    ret.steerRateCost = 0.5
-    ret.steerControlType = car.CarParams.SteerControlType.torque
 
     return ret
 

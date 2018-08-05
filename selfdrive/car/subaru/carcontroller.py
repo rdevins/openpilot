@@ -9,7 +9,7 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 1023
+    self.STEER_MAX = 1022
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 0           # time to peak torque
     self.STEER_DELTA_DOWN = 0         # torque to zero
@@ -85,8 +85,7 @@ class CarController(object):
           left3 = 24
         else:
           left3 = 0
-          chksm_left3 = 0
-
+          
         if reverse_steer != 0:
           lkas_request = 1
         else :
@@ -96,34 +95,34 @@ class CarController(object):
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
+  
+      if (self.car_fingerprint == CAR.XV2018) or (self.car_fingerprint == CAR.IMREZA2017):
+      
+        reverse_steer = apply_steer * -1
         
-      if self.car_fingerprint == CAR.XV2018:
-
-        if abs(apply_steer) > 0.001:
+        #counts from 0 to 15 then back to 0
+        idx = (frame / P.STEER_STEP) % 16
+        
+        if abs(reverse_steer) != 0:
           lkas_request = 1
           lkas_rq_checksum = 32
         else:
           lkas_request = 0
           lkas_rq_checksum = 0
 
-        #counts from 0 to 15 then back to 0
-        idx = (frame / P.STEER_STEP) % 16
-
-        if not lkas_enabled:
-          apply_steer = 0
-
         left3 = 1
         
         #max_steer 4095 
 
-        if apply_steer < 0:
-          chksm_steer = 4096-abs(steer)
+        if reverse_steer < 0:
+          chksm_steer = 4096-abs(reverse_steer)
         else:
-          chksm_steer = apply_steer
+          chksm_steer = reverse_steer
         
-        steer2 = (apply_steer >> 8) & 0x5
-        steer1 =  apply_steer - (steer2 << 8)
+        steer2 = (chksm_steer >> 8) & 0x5
+        steer1 =  chksm_steer - (steer2 << 8)
         checksum = ((idx + steer1 + steer2 + left3 + lkas_rq_checksum) % 256) + 35
+        
 
       can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, idx, steer1, byte2, lkas_request, checksum))
 
