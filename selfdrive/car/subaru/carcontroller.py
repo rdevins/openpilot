@@ -63,19 +63,14 @@ class CarController(object):
 
       apply_steer = int(round(apply_steer))
       self.apply_steer_last = apply_steer
-		
+
       lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego > 3.
 
       if not lkas_enabled:
           apply_steer = 0
-          
+
       if self.car_fingerprint == CAR.OUTBACK:
 
-        if abs(actuators.steer) > 1:
-          lkas_request = 1
-        else :
-          lkas_request = 0
-        
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
 
@@ -84,13 +79,18 @@ class CarController(object):
           chksm_steer = 1024-abs(apply_steer)
         else:
           chksm_steer = apply_steer
-          
+
         if apply_steer < 0:
           left3 = 24
         else:
           left3 = 0
           chksm_left3 = 0
-          
+
+        if apply_steer != 0:
+          lkas_request = 1
+        else :
+          lkas_request = 0
+
         steer2 = (chksm_steer >> 8) & 0x7
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
