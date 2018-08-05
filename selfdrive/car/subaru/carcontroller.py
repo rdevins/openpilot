@@ -11,11 +11,11 @@ class CarControllerParams():
   def __init__(self, car_fingerprint):
     self.STEER_MAX = 1022
     self.STEER_STEP = 2                # how often we update the steer cmd
-    self.STEER_DELTA_UP = 0           # time to peak torque
-    self.STEER_DELTA_DOWN = 0         # torque to zero
-    self.STEER_DRIVER_ALLOWANCE = 50   # allowed driver torque before start limiting
-    self.STEER_DRIVER_MULTIPLIER = 4   # weight driver torque heavily
-    self.STEER_DRIVER_FACTOR = 100     # from dbc
+    self.STEER_DELTA_UP = 0.5           # time to peak torque
+    self.STEER_DELTA_DOWN = 0.5         # torque to zero
+    self.STEER_DRIVER_ALLOWANCE = 5000   # allowed driver torque before start limiting
+    self.STEER_DRIVER_MULTIPLIER = 1   # weight driver torque heavily
+    self.STEER_DRIVER_FACTOR = 1     # from dbc
 
 
 class CarController(object):
@@ -76,7 +76,7 @@ class CarController(object):
         idx = (frame / P.STEER_STEP) % 8
 
         #Max steer = 1023
-        if actuators.steer < 0:
+        if apply_steer < 0:
           chksm_steer = 1024-abs(reverse_steer)
         else:
           chksm_steer = reverse_steer

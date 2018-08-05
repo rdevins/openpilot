@@ -62,8 +62,21 @@ class CarInterface(object):
       ret.mass = 1568 + std_cargo
       ret.safetyModel = car.CarParams.SafetyModels.subaru
       ret.wheelbase = 2.75
-      ret.steerRatio = 14
+      ret.steerRatio = 16
       ret.centerToFront = ret.wheelbase * 0.5 + 1
+    
+    # testing tuning
+    ret.steerActuatorDelay = 0.1
+    ret.steerRateCost = 0.5
+    ret.steerControlType = car.CarParams.SteerControlType.torque
+    ret.steerLimitAlert = True
+    
+    ret.steerKf = 0.00004   
+    ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
+    ret.steerKpV, ret.steerKiV = [[0.2], [0.00]]
+
+    ret.steerMaxBP = [0.] # m/s
+    ret.steerMaxV = [1.]
 
     # FIXME: from gm
     ret.gasMaxBP = [0.]
@@ -108,19 +121,6 @@ class CarInterface(object):
     ret.tireStiffnessRear = tireStiffnessRear_civic * \
                             ret.mass / mass_civic * \
                             (ret.centerToFront / ret.wheelbase) / (centerToFront_civic / wheelbase_civic)
-
-    # testing tuning
-    ret.steerActuatorDelay = 0.1
-    ret.steerRateCost = 1.0
-    ret.steerControlType = car.CarParams.SteerControlType.torque
-    ret.steerLimitAlert = True
-    
-    ret.steerKf = 0.00008   
-    ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-    ret.steerKpV, ret.steerKiV = [[0.2], [0.00]]
-
-    ret.steerMaxBP = [0.] # m/s
-    ret.steerMaxV = [1.]
 
     return ret
 
