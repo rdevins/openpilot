@@ -75,16 +75,16 @@ class CarController(object):
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
 
-        if reverse_steer < 0:
+        if chksm_steer < 0:
           left3 = 24
         else:
           left3 = 0
           
-        if reverse_steer != 0:
+        if chksm_steer != 0:
           lkas_request = 1
         else :
           lkas_request = 0
-
+          
         steer2 = (chksm_steer >> 8) & 0x7
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
@@ -92,12 +92,12 @@ class CarController(object):
   
       if (self.car_fingerprint == CAR.XV2018):
       
-        reverse_steer = apply_steer * -1
+        chksm_steer = apply_steer * -1
         
         #counts from 0 to 15 then back to 0
         idx = (frame / P.STEER_STEP) % 16
         
-        if abs(reverse_steer) != 0:
+        if abs(chksm_steer) != 0:
           lkas_request = 1
           lkas_rq_checksum = 32
         else:
@@ -107,11 +107,6 @@ class CarController(object):
         left3 = 1
         
         #max_steer 4095 
-
-        if reverse_steer < 0:
-          chksm_steer = 4096-abs(reverse_steer)
-        else:
-          chksm_steer = reverse_steer
         
         steer2 = (chksm_steer >> 8) & 0x5
         steer1 =  chksm_steer - (steer2 << 8)
