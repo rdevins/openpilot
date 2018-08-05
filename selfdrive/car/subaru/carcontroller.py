@@ -71,15 +71,9 @@ class CarController(object):
 
       if self.car_fingerprint == CAR.OUTBACK:
         
-        reverse_steer = apply_steer * -1
+        chksm_steer = apply_steer * -1
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
-
-        #Max steer = 1023
-        if reverse_steer < 0:
-          chksm_steer = 1024-abs(reverse_steer)
-        else:
-          chksm_steer = reverse_steer
 
         if reverse_steer < 0:
           left3 = 24
