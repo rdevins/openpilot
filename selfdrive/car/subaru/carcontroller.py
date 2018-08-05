@@ -11,8 +11,8 @@ class CarControllerParams():
   def __init__(self, car_fingerprint):
     self.STEER_MAX = 1023
     self.STEER_STEP = 2                # how often we update the steer cmd
-    self.STEER_DELTA_UP = 5           # time to peak torque
-    self.STEER_DELTA_DOWN = 5         # torque to zero
+    self.STEER_DELTA_UP = 0           # time to peak torque
+    self.STEER_DELTA_DOWN = 0         # torque to zero
     self.STEER_DRIVER_ALLOWANCE = 50   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 4   # weight driver torque heavily
     self.STEER_DRIVER_FACTOR = 100     # from dbc
@@ -71,7 +71,7 @@ class CarController(object):
 
       if self.car_fingerprint == CAR.OUTBACK:
         
-        reverse_steer = final_steer * -1
+        reverse_steer = apply_steer * -1
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
 
