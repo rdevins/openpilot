@@ -98,7 +98,6 @@ class CarState(object):
     self.prev_right_blinker_on = self.right_blinker_on
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
-    if 
 
     if self.car_fingerprint == CAR.OUTBACK:
       self.acc_active = pt_cp.vl["Highbeam"]['Stalk']
