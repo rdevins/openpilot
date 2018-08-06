@@ -73,6 +73,8 @@ class CarController(object):
         
         if apply_steer != 0:
           chksm_steer = apply_steer * -1
+        else:
+          chksm_steer = 0
         
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
