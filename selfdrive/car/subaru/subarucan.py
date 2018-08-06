@@ -1,6 +1,6 @@
-from selfdrive.car.subaru.values import CAR
+from selfdrive.car.subaru.values import CAR, DBC
 
-def create_steering_control(packer, bus, idx, steer1, byte2, checksum):
+def create_steering_control(packer, bus, car_fingerprint, idx, steer1, byte2, checksum):
   if car_fingerprint == CAR.OUTBACK:
     values = {
       "Byte0": idx,
