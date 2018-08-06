@@ -74,15 +74,17 @@ class CarController(object):
         
         if apply_steer != 0:
           chksm_steer = apply_steer * -1
+          chksm_engage = 1
         else:
           chksm_steer = 0
+          chksm_engage = 0
         
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
         steer2 = (chksm_steer >> 8) & 0x1F
         steer1 =  chksm_steer - (steer2 << 8)
         byte2 = steer2
-        checksum = (idx + steer2 + steer1) % 256
+        checksum = (idx + steer2 + steer1 + chksm_engage) % 256
         
       if (self.car_fingerprint == CAR.XV2018):
       
