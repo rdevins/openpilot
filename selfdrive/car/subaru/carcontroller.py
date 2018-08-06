@@ -9,7 +9,7 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 1022
+    self.STEER_MAX = 2000
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 25           # time to peak torque
     self.STEER_DELTA_DOWN = 90         # torque to zero
@@ -75,8 +75,9 @@ class CarController(object):
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
 
+        
         if chksm_steer < 0:
-          left3 = 24
+          left3 = 16
         else:
           left3 = 0
           
@@ -85,7 +86,7 @@ class CarController(object):
         else :
           lkas_request = 0
           
-        steer2 = (chksm_steer >> 8) & 0x7
+        steer2 = (chksm_steer >> 8) & 0xF
         steer1 =  chksm_steer - (steer2 << 8)
         checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
         byte2 = steer2 + left3
