@@ -9,7 +9,7 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 2000
+    self.STEER_MAX = 3000              # max_steer 4095 
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 25           # time to peak torque
     self.STEER_DELTA_DOWN = 90         # torque to zero
@@ -71,49 +71,33 @@ class CarController(object):
 
       if self.car_fingerprint == CAR.OUTBACK:
         
-        chksm_steer = apply_steer * -1
+        if apply_steer != 0:
+          chksm_steer = apply_steer * -1
+        
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
-
-        
-        if chksm_steer < 0:
-          left3 = 16
-        else:
-          left3 = 0
-          
-        if chksm_steer != 0:
-          lkas_request = 1
-        else :
-          lkas_request = 0
-          
-        steer2 = (chksm_steer >> 8) & 0xF
+        steer2 = (chksm_steer >> 8) & 0x1F
         steer1 =  chksm_steer - (steer2 << 8)
-        checksum = (idx + steer1 + steer2 + left3 + lkas_request) % 256
-        byte2 = steer2 + left3
-  
+        byte2 = steer2
+        checksum = (idx + steer2 + steer1) % 256
+        
       if (self.car_fingerprint == CAR.XV2018):
       
+        #counts from 0 to 15 then back to 0 + 16 for enable bit
+        
         chksm_steer = apply_steer * -1
-        
-        #counts from 0 to 15 then back to 0
-        idx = (frame / P.STEER_STEP) % 16
-        
-        if abs(chksm_steer) != 0:
-          lkas_request = 1
-          lkas_rq_checksum = 32
+        if chksm_steer != 0:
+          left3 = 32
         else:
-          lkas_request = 0
-          lkas_rq_checksum = 0
+          left3 = 0
 
-        left3 = 1
-        
-        #max_steer 4095 
-        
+        idx = ((frame / P.STEER_STEP) % 16) + 16
         steer2 = (chksm_steer >> 8) & 0x5
         steer1 =  chksm_steer - (steer2 << 8)
-        checksum = ((idx + steer1 + steer2 + left3 + lkas_rq_checksum) % 256) + 35
-        
+        byte2 = steer2 + left3
 
-      can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, idx, steer1, byte2, lkas_request, checksum))
+        checksum = ((idx + steer1 + byte2 + lkas_rq_checksum) % 256) + 35
+      can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, idx, steer1, byte2, checksum))
+
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
