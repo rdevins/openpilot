@@ -92,7 +92,6 @@ class CarState(object):
     self.standstill = self.v_ego_raw < 0.01
 
     self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
-    self.steer_override = abs(self.steer_torque_driver) > 500.0
 
     self.prev_left_blinker_on = self.left_blinker_on
     self.prev_right_blinker_on = self.right_blinker_on
@@ -103,4 +102,4 @@ class CarState(object):
     self.acc_active = pt_cp.vl["Stalk"]['Highbeam']
     self.main_on = pt_cp.vl["Stalk"]['Highbeam']
     self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
-    self.steer_override = abs(self.steer_torque_driver) > 2500.0
+    self.steer_override = abs(self.steer_torque_driver) > 8000.0
