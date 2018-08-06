@@ -45,7 +45,8 @@ def get_powertrain_can_parser(CP, canbus):
 class CarState(object):
   def __init__(self, CP, canbus):
     # initialize can parser
-
+    self.CP = CP
+    
     self.car_fingerprint = CP.carFingerprint
     self.left_blinker_on = False
     self.prev_left_blinker_on = False
