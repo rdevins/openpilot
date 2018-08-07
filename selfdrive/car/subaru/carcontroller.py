@@ -10,7 +10,7 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 3000              # max_steer 4095 
+    self.STEER_MAX = 4095              # max_steer 4095 
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 25           # time to peak torque
     self.STEER_DELTA_DOWN = 90         # torque to zero
@@ -101,7 +101,7 @@ class CarController(object):
         steer1 =  chksm_steer - (steer2 << 8)
         byte2 = steer2 + left3
 
-        checksum = ((idx + steer1 + byte2 + lkas_rq_checksum) % 256) + 35
+        checksum = ((idx + steer1 + byte2) % 256) + 35
       can_sends.append(subarucan.create_steering_control(self.packer_pt, canbus.powertrain, CS.CP.carFingerprint, idx, steer1, byte2, checksum))
 
 
