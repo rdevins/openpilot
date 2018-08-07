@@ -62,18 +62,18 @@ class CarInterface(object):
       ret.mass = 1568 + std_cargo
       ret.safetyModel = car.CarParams.SafetyModels.subaru
       ret.wheelbase = 2.75
-      ret.steerRatio = 16
+      ret.steerRatio = 14
       ret.centerToFront = ret.wheelbase * 0.5 + 1
     
     # testing tuning
-    ret.steerActuatorDelay = 0.1
-    ret.steerRateCost = 0.5
+    ret.steerActuatorDelay = 0.0
+    ret.steerRateCost = 0
     ret.steerControlType = car.CarParams.SteerControlType.torque
-    ret.steerLimitAlert = True
+    ret.steerLimitAlert = False
     
-    ret.steerKf = 0.00004   
+    ret.steerKf = 0.00008
     ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-    ret.steerKpV, ret.steerKiV = [[0.2], [0.00]]
+    ret.steerKpV, ret.steerKiV = [[0.8], [0.0]]
 
     ret.steerMaxBP = [0.] # m/s
     ret.steerMaxV = [1.]
@@ -105,8 +105,8 @@ class CarInterface(object):
     centerToFront_civic = wheelbase_civic * 0.4
     centerToRear_civic = wheelbase_civic - centerToFront_civic
     rotationalInertia_civic = 2500
-    tireStiffnessFront_civic = 85400
-    tireStiffnessRear_civic = 90000
+    tireStiffnessFront_civic = 192150
+    tireStiffnessRear_civic = 202500
     centerToRear = ret.wheelbase - ret.centerToFront
     # TODO: get actual value, for now starting with reasonable value for
     # civic and scaling by mass and wheelbase
