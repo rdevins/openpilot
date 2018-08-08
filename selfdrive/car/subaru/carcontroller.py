@@ -10,7 +10,7 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 4095              # max_steer 4095 
+    self.STEER_MAX = 200              # max_steer 4095 
     self.STEER_STEP = 2                # how often we update the steer cmd
     '''
     self.STEER_DELTA_UP = 25           # time to peak torque
