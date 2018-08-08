@@ -49,7 +49,7 @@ class CarController(object):
 
     if (frame % P.STEER_STEP) == 0:
       
-      apply_steer = int(clip(-actuators.steer * STEER_MAX, -STEER_MAX, STEER_MAX))
+      apply_steer = int(clip(-actuators.steer * P.STEER_MAX, -P.STEER_MAX, P.STEER_MAX))
       '''
       final_steer = actuators.steer if enabled else 0.
       apply_steer = final_steer * P.STEER_MAX
