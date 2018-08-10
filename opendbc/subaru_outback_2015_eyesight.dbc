@@ -277,10 +277,10 @@ BO_ 880 Steer_Torque_2: 8 XXX
  SG_ NEW_SIGNAL_5_2017 : 54|1@0+ (1,0) [0|3] "" XXX
 
 BO_ 881 Steering_Torque: 8 XXX
+ SG_ Steering_Motor_LeftRight : 23|16@0- (0.125,0) [0|255] "" XXX
+ SG_ Steer_Torque_Sensor : 39|16@0- (0.306,0) [0|255] "" XXX
  SG_ Steering_Motor_Flat : 0|8@1+ (1,0) [0|255] "" XXX
- SG_ Steering_Motor_LeftRight : 23|16@0- (1,0) [0|255] "" XXX
- SG_ Left_Right : 55|8@0- (1,0) [0|255] "" XXX
- SG_ Steer_Torque_Sensor : 39|16@0- (1,0) [0|255] "" XXX
+ SG_ Steering_Angle : 55|8@0- (1,0) [0|255] "" XXX
 
 BO_ 882 Counter: 8 XXX
  SG_ Counter : 15|4@0+ (1,0) [0|31] "" XXX
