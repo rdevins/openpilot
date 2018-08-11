@@ -101,7 +101,7 @@ class CarState(object):
 
     if self.car_fingerprint == CAR.OUTBACK:  
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle'] + 6.5
-      self.ldw = pt_cp.vl["LDW_Disable"]['Cruise_On']
+      self.ldw = pt_cp.vl["ES_Status"]['LDW_Disable']
 
     self.acc_active = pt_cp.vl["ES_Status"]['Cruise_On'] #["Stalk"]['Highbeam']
     self.main_on = pt_cp.vl["ES_Status"]['Cruise_On'] #["Stalk"]['Highbeam']
