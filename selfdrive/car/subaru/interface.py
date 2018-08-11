@@ -71,9 +71,9 @@ class CarInterface(object):
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerLimitAlert = False
     
-    ret.steerKf = 0.00008
+    ret.steerKf = 0.00006
     ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-    ret.steerKpV, ret.steerKiV = [[0.8], [0.0]]
+    ret.steerKpV, ret.steerKiV = [[0.6], [0.05]]
 
     ret.steerMaxBP = [0.] # m/s
     ret.steerMaxV = [1.]
@@ -96,7 +96,6 @@ class CarInterface(object):
     ret.startAccel = 0.8
 
     # end from gm
-
 
     # hardcoding honda civic 2016 touring params so they can be used to
     # scale unknown params for other cars
