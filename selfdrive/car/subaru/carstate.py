@@ -18,7 +18,7 @@ def get_powertrain_can_parser(CP, canbus):
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
     ("LDW_Disable", "ES_Status", 0),
-    ("Cruise_On", "ES_Status", 0)
+    ("Cruise_On", "ES_Status", 0), 
     ("Highbeam", "Stalk", 0),
     #remove("Message", "ES_Brake", 0),
     #remove("Message", "ES_RPM", 0),
