@@ -19,7 +19,7 @@ def get_powertrain_can_parser(CP, canbus):
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
     ("LDW_Disable", "ES_Status", 0),
     ("Cruise_On", "ES_Status", 0)
-    #("Highbeam", "Stalk", 0),
+    ("Highbeam", "Stalk", 0),
     #remove("Message", "ES_Brake", 0),
     #remove("Message", "ES_RPM", 0),
     #remove("Message", "ES_LDW", 0),
@@ -34,7 +34,7 @@ def get_powertrain_can_parser(CP, canbus):
     #remove("ES_RPM", 20),
     #remove("ES_LDW", 20),
     #remove("ES_CruiseThrottle", 20),
-    #("Stalk", 10),
+    ("Stalk", 10),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 50),
     ("Steering_Torque", 100),
@@ -54,7 +54,7 @@ class CarState(object):
     self.prev_right_blinker_on = False
     #FIXME
     self.steer_torque_driver = 0
-    self.steer_not_allowed = true
+    self.steer_not_allowed = False
     self.main_on = False
 
     # vEgo kalman filter
@@ -93,16 +93,16 @@ class CarState(object):
     self.prev_right_blinker_on = self.right_blinker_on
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
-
+    self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
+    self.steer_override = abs(self.steer_torque_driver) > 8000.0
+    
     if self.car_fingerprint == CAR.OUTBACK:  
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle'] + 6.5
       self.ldw = pt_cp.vl["ES_Status"]['LDW_Disable']
-      self.acc_active = pt_cp.vl["ES_Status"]['Cruise_On'] #["Stalk"]['Highbeam']
-      self.main_on = pt_cp.vl["ES_Status"]['Cruise_On'] #["Stalk"]['Highbeam']
-      self.steer_not_allowed = not pt_cp.vl["ES_Status"]['LDW_Disable']
+      self.acc_active = pt_cp.vl["Stalk"]['Highbeam'] #["Stalk"]['Highbeam']
+      self.main_on = pt_cp.vl["Stalk"]['Highbeam'] #["ES_Status"]['Cruise_On']
 
-    self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
-    self.steer_override = abs(self.steer_torque_driver) > 8000.0
+    
     if self.car_fingerprint == CAR.XV2018:  
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
       self.acc_active = pt_cp.vl["Stalk"]['Highbeam'] 
