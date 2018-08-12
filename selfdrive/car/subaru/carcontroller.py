@@ -67,7 +67,9 @@ class CarController(object):
       
       if (self.car_fingerprint == CAR.OUTBACK):
       
-        if (not enabled or (CS.v_ego < 10) or CS.ldw) != 0:
+        lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego > 10.
+
+        if not lkas_enabled:
           apply_steer = 0
           chksm_steer = 0
           chksm_engage = 0
