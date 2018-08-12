@@ -55,6 +55,7 @@ class CarState(object):
     #FIXME
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
+    self.acc_active = False
     self.main_on = False
 
     # vEgo kalman filter
