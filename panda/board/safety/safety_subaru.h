@@ -20,17 +20,9 @@ static int subaru_tx_lin_hook(int lin_num, uint8_t *data, int len) {
 }
 
 static int subaru_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
-  
-  uint32_t addr;
-
-  if (bus_num == 0) {
-    return 1; // ES bus
-  }
-  if (bus_num == 1) { // remove ES_LKAS in forwards
-   if (addr == 0x164) {
-     return false;
-   }
-    return 0; // Chassis CAN
+  if (bus_num == 0 || bus_num == 1) {
+    int addr = to_fwd->RIR>>21;
+    return addr != 0x164 ? (uint8_t)(~bus_num & 0x0) : -1;
   }
   return false;
 }

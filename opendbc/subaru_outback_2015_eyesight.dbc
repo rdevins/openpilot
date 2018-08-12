@@ -200,24 +200,24 @@ BO_ 356 ES_LKAS: 8 XXX
 
 BO_ 358 ES_Status: 8 XXX
  SG_ Counter : 39|3@0+ (1,0) [0|7] "" XXX
- SG_ Cruise_On : 16|1@1+ (1,0) [0|7] "" XXX
- SG_ Cruise_Activated : 17|1@1+ (1,0) [0|3] "" XXX
- SG_ Obstacle_Distance : 48|4@1+ (1,0) [0|15] "" XXX
+ SG_ Cruise_On : 16|1@0+ (1,0) [0|7] "" XXX
+ SG_ Cruise_Activated : 17|1@0+ (1,0) [0|3] "" XXX
+ SG_ Obstacle_Distance : 48|4@0+ (1,0) [0|15] "" XXX
  SG_ Cruise_Off : 22|1@0+ (1,0) [0|3] "" XXX
- SG_ Saved_Speed : 24|8@1+ (1,0) [0|255] "" XXX
- SG_ Car_Follow : 46|1@1+ (1,0) [0|255] "" XXX
+ SG_ Saved_Speed : 24|8@0+ (1,0) [0|255] "" XXX
+ SG_ Car_Follow : 46|1@0+ (1,0) [0|255] "" XXX
  SG_ Driver_Input : 20|1@0+ (1,0) [0|15] "" XXX
- SG_ WHEELS_MOVING_2015 : 19|1@1+ (1,0) [0|3] "" XXX
+ SG_ WHEELS_MOVING_2015 : 19|1@0+ (1,0) [0|3] "" XXX
  SG_ Untitled_Blank : 18|1@0+ (1,0) [0|3] "" XXX
  SG_ NEW_SIGNAL_6_Blank : 21|1@0+ (1,0) [0|3] "" XXX
- SG_ NEW_SIGNAL_5_Blank : 33|1@1+ (1,0) [0|3] "" XXX
- SG_ NEW_SIGNAL_4_Blank : 34|1@1+ (1,0) [0|7] "" XXX
+ SG_ NEW_SIGNAL_5_Blank : 33|1@0+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_4_Blank : 34|1@0+ (1,0) [0|7] "" XXX
  SG_ NEW_SIGNAL_1 : 35|1@0+ (1,0) [0|31] "" XXX
  SG_ Steep_Hill_Disengage : 44|1@0+ (1,0) [0|3] "" XXX
  SG_ 3SecondDisengage : 13|2@0+ (1,0) [0|3] "" XXX
  SG_ Disengage_Alert : 15|2@0+ (1,0) [0|3] "" XXX
- SG_ AEB_Disable : 0|1@1+ (1,0) [0|7] "" XXX
- SG_ LDW_Disable : 1|1@1+ (1,0) [0|3] "" XXX
+ SG_ AEB_Disable : 0|1@0+ (1,0) [0|7] "" XXX
+ SG_ LDW_Disable : 1|1@0+ (1,0) [0|3] "" XXX
 
 BO_ 359 ES_LDW: 8 XXX
  SG_ 2Right_Depart : 50|1@1+ (1,0) [0|7] "" XXX
