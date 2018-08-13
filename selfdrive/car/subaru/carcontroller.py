@@ -42,7 +42,7 @@ class CarController(object):
     # Send CAN commands.
     can_sends = []
     canbus = self.canbus
-
+ 
     ### STEER ###
 
     if (frame % P.STEER_STEP) == 0:
@@ -67,7 +67,7 @@ class CarController(object):
       
       if (self.car_fingerprint == CAR.OUTBACK):
       
-        lkas_enabled = enabled if CS.v_ego > 10.
+        lkas_enabled = enabled if CS.v_ego > 10
 
         if not lkas_enabled:
           apply_steer = 0
