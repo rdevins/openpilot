@@ -20,11 +20,31 @@ static int subaru_tx_lin_hook(int lin_num, uint8_t *data, int len) {
 }
 
 static int subaru_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
-  if (bus_num == 0 || bus_num == 1) {
-    int addr = to_fwd->RIR>>21;
-    return addr != 0x164 ? (uint8_t)(~bus_num & 0x0) : -1;
+  
+  // convert little endian to hex?
+  int32_t addr = to_fwd->RIR >> 21;
+
+  // forward CAN 0 > 1
+  if (bus_num == 0) {
+    return 1; // ES CAN
   }
-  return false;
+  // forward CAN 1 > 0, except ES_LKAS
+  else if (bus_num == 1) {
+    
+    // subaru global
+    if (addr == 0x122) {
+      return -1;
+    }
+    // outback 2015
+    else if (addr == 0x164) {
+      return -1;
+    }
+
+    return 0; // Main CAN
+  }
+
+  // fallback to do not forward
+  return -1;
 }
 
 const safety_hooks subaru_hooks = {
