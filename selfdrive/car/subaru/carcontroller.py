@@ -10,13 +10,14 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 3000              # max_steer 4095 
+    self.STEER_MAX = 2047              # max_steer 4095 
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 25           # torque increase per refresh
     self.STEER_DELTA_DOWN = 25         # torque decrease per refresh
-    self.STEER_DRIVER_ALLOWANCE = 4000   # allowed driver torque before start limiting
+    self.STEER_DRIVER_ALLOWANCE = 2000   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 1   # weight driver torque heavily
     self.STEER_DRIVER_FACTOR = 1     # from dbc
+    
 
 
 class CarController(object):
@@ -42,7 +43,7 @@ class CarController(object):
     # Send CAN commands.
     can_sends = []
     canbus = self.canbus
- 
+
     ### STEER ###
 
     if (frame % P.STEER_STEP) == 0:
@@ -65,17 +66,21 @@ class CarController(object):
       apply_steer = int(round(apply_steer))
       self.apply_steer_last = apply_steer
       
-      if (self.car_fingerprint == CAR.OUTBACK):
       
-        if (CS.v_ego < 10):
+      lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego >= 10.
+
+      if not lkas_enabled:
           apply_steer = 0
-          chksm_steer = 0
-          chksm_engage = 0
-          
-        if apply_steer > 0:
+
+      if self.car_fingerprint == CAR.OUTBACK:
+        
+        if apply_steer != 0:
           chksm_steer = apply_steer * -1
           chksm_engage = 1
-
+        else:
+          chksm_steer = 0
+          chksm_engage = 0
+        
         #counts from 0 to 7 then back to 0
         idx = (frame / P.STEER_STEP) % 8
         steer2 = (chksm_steer >> 8) & 0x1F
@@ -85,19 +90,14 @@ class CarController(object):
         
       if (self.car_fingerprint == CAR.XV2018):
       
-        lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego > 0.
-
-        if not lkas_enabled:
-          apply_steer = 0
-
-        chksm_steer = apply_steer
+        #counts from 0 to 15 then back to 0 + 16 for enable bit
         
+        chksm_steer = apply_steer * -1
         if chksm_steer != 0:
           left3 = 32
         else:
           left3 = 0
 
-        #counts from 0 to 15 then back to 0 + 16 for enable bit
         idx = ((frame / P.STEER_STEP) % 16) + 16
         steer2 = (chksm_steer >> 8) & 0x5
         steer1 =  chksm_steer - (steer2 << 8)

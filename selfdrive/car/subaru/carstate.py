@@ -18,22 +18,30 @@ def get_powertrain_can_parser(CP, canbus):
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
     ("LDW_Disable", "ES_Status", 0),
-    ("Cruise_On", "ES_Status", 0), 
     ("Cruise_Activated", "ES_Status", 0), 
+    ("Cruise_On", "ES_Status", 0)
     ("Cruise_On", "CruiseControl_2015", 0), 
     ("Cruise_Activated", "CruiseControl_2015", 0), 
     ("Highbeam", "Stalk", 0),
+    #remove("Message", "ES_Brake", 0),
+    #remove("Message", "ES_RPM", 0),
+    #remove("Message", "ES_LDW", 0),
+    #remove("Message", "ES_CruiseThrottle", 0),
   ]
   
   checks = [
     # sig_address, frequency
     ("Dashlights", 10),
+    ("ES_Status", 20),
+    ("CruiseControl_2015", 20),
+    #remove("ES_Brake", 20),
+    #remove("ES_RPM", 20),
+    #remove("ES_LDW", 20),
+    #remove("ES_CruiseThrottle", 20),
+    ("Stalk", 10),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 50),
     ("Steering_Torque", 100),
-    ("ES_Status", 20),
-    ("CruiseControl_2015", 20),
-    ("Stalk", 10),
   ]
 
   return CANParser(DBC[CP.carFingerprint]['pt'], signals, checks, canbus.powertrain)
@@ -51,7 +59,6 @@ class CarState(object):
     #FIXME
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
-    self.acc_active = False
     self.main_on = False
 
     # vEgo kalman filter
@@ -82,6 +89,7 @@ class CarState(object):
     self.a_ego = float(v_ego_x[1])
     #self.v_ego = speed_estimate
     #self.a_ego = speed_estimate
+
     #print(self.v_ego_raw)
     #print(self.v_ego)
 
@@ -99,9 +107,9 @@ class CarState(object):
       self.main_on = pt_cp.vl["CruiseControl_2015"]['Cruise_On'] #["ES_Status"]['Cruise_On']
 
     
-    if self.car_fingerprint == CAR.XV2018:
+    if self.car_fingerprint == CAR.XV2018:  
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
-      self.acc_active = pt_cp.vl["Stalk"]['Highbeam']
+      self.acc_active = pt_cp.vl["Stalk"]['Highbeam'] 
       self.main_on = pt_cp.vl["Stalk"]['Highbeam']
     #print(self.a_ego)
 
