@@ -14,7 +14,7 @@ class CarControllerParams():
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 25           # torque increase per refresh
     self.STEER_DELTA_DOWN = 25         # torque decrease per refresh
-    if self.car_fingerprint == CAR.OUTBACK:
+    if car_fingerprint == CAR.OUTBACK:
       self.STEER_DRIVER_ALLOWANCE = 2000   # allowed driver torque before start limiting
     else:
       self.STEER_DRIVER_ALLOWANCE = 250   # allowed driver torque before start limiting
