@@ -17,28 +17,18 @@ def get_powertrain_can_parser(CP, canbus):
     ("RL", "WHEEL_SPEEDS", 0), 
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
-    ("LDW_Disable", "ES_Status", 0),
-    ("Cruise_Activated", "ES_Status", 0), 
-    ("Cruise_On", "ES_Status", 0)
     ("Cruise_On", "CruiseControl_2015", 0), 
     ("Cruise_Activated", "CruiseControl_2015", 0), 
-    ("Highbeam", "Stalk", 0),
-    #remove("Message", "ES_Brake", 0),
-    #remove("Message", "ES_RPM", 0),
-    #remove("Message", "ES_LDW", 0),
-    #remove("Message", "ES_CruiseThrottle", 0),
   ]
   
   checks = [
     # sig_address, frequency
     ("Dashlights", 10),
-    ("ES_Status", 20),
     ("CruiseControl_2015", 20),
     #remove("ES_Brake", 20),
     #remove("ES_RPM", 20),
     #remove("ES_LDW", 20),
     #remove("ES_CruiseThrottle", 20),
-    ("Stalk", 10),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 50),
     ("Steering_Torque", 100),
@@ -56,7 +46,6 @@ class CarState(object):
     self.prev_left_blinker_on = False
     self.right_blinker_on = False
     self.prev_right_blinker_on = False
-    #FIXME
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
     self.main_on = False
@@ -79,38 +68,30 @@ class CarState(object):
     self.v_wheel_rl = pt_cp.vl["WHEEL_SPEEDS"]['RL'] * CV.KPH_TO_MS
     self.v_wheel_rr = pt_cp.vl["WHEEL_SPEEDS"]['RR'] * CV.KPH_TO_MS
     speed_estimate = (self.v_wheel_fl + self.v_wheel_fr + self.v_wheel_rl + self.v_wheel_rr) / 4.0
-    #print("speed_estimate")
-    #print(speed_estimate)
 
     self.v_ego_raw = speed_estimate
     # FIXME
     v_ego_x = self.v_ego_kf.update(speed_estimate)
     self.v_ego = float(v_ego_x[0])
     self.a_ego = float(v_ego_x[1])
-    #self.v_ego = speed_estimate
-    #self.a_ego = speed_estimate
-
-    #print(self.v_ego_raw)
-    #print(self.v_ego)
 
     self.prev_left_blinker_on = self.left_blinker_on
     self.prev_right_blinker_on = self.right_blinker_on
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
     self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
-    self.steer_override = abs(self.steer_torque_driver) > 8000.0
     
     if self.car_fingerprint == CAR.OUTBACK:
+      self.steer_override = abs(self.steer_torque_driver) > 8000.0
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle'] + 6.5
-      self.ldw = pt_cp.vl["ES_Status"]['LDW_Disable']
       self.acc_active = pt_cp.vl["CruiseControl_2015"]['Cruise_Activated'] #["Stalk"]['Highbeam']
-      self.main_on = pt_cp.vl["CruiseControl_2015"]['Cruise_On'] #["ES_Status"]['Cruise_On']
+      self.main_on = pt_cp.vl["CruiseControl_2015"]['Cruise_On']
 
     
     if self.car_fingerprint == CAR.XV2018:  
+      self.steer_override = abs(self.steer_torque_driver) > 250.0
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
       self.acc_active = pt_cp.vl["Stalk"]['Highbeam'] 
       self.main_on = pt_cp.vl["Stalk"]['Highbeam']
-    #print(self.a_ego)
 
     self.standstill = self.v_ego_raw < 0.01

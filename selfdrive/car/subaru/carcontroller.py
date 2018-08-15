@@ -14,7 +14,10 @@ class CarControllerParams():
     self.STEER_STEP = 2                # how often we update the steer cmd
     self.STEER_DELTA_UP = 25           # torque increase per refresh
     self.STEER_DELTA_DOWN = 25         # torque decrease per refresh
-    self.STEER_DRIVER_ALLOWANCE = 2000   # allowed driver torque before start limiting
+    if self.car_fingerprint == CAR.OUTBACK:
+      self.STEER_DRIVER_ALLOWANCE = 2000   # allowed driver torque before start limiting
+    else:
+      self.STEER_DRIVER_ALLOWANCE = 250   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 1   # weight driver torque heavily
     self.STEER_DRIVER_FACTOR = 1     # from dbc
     
@@ -35,7 +38,7 @@ class CarController(object):
     print(DBC)
     self.packer_pt = CANPacker(DBC[car_fingerprint]['pt'])
 
-  def update(self, sendcan, enabled, CS, frame, actuators, ):
+  def update(self, sendcan, enabled, CS, frame, actuators):
     """ Controls thread """
 
     P = self.params
