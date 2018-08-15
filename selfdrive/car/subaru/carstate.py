@@ -17,14 +17,14 @@ def get_powertrain_can_parser(CP, canbus):
     ("RL", "WHEEL_SPEEDS", 0), 
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
-    ("Cruise_On", "CruiseControl_2015", 0), 
-    ("Cruise_Activated", "CruiseControl_2015", 0), 
+    ("Cruise_On", "CruiseControl", 0), 
+    ("Cruise_Activated", "CruiseControl", 0), 
   ]
   
   checks = [
     # sig_address, frequency
     ("Dashlights", 10),
-    ("CruiseControl_2015", 20),
+    ("CruiseControl", 20),
     #remove("ES_Brake", 20),
     #remove("ES_RPM", 20),
     #remove("ES_LDW", 20),
@@ -80,18 +80,15 @@ class CarState(object):
     self.left_blinker_on = pt_cp.vl["Dashlights"]['LEFT_BLINKER'] == 1
     self.right_blinker_on = pt_cp.vl["Dashlights"]['RIGHT_BLINKER'] == 1
     self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
-    
+    self.acc_active = pt_cp.vl["CruiseControl"]['Cruise_Activated'] #["Stalk"]['Highbeam']
+    self.main_on = pt_cp.vl["CruiseControl"]['Cruise_On']
+      
     if self.car_fingerprint == CAR.OUTBACK:
       self.steer_override = abs(self.steer_torque_driver) > 8000.0
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle'] + 6.5
-      self.acc_active = pt_cp.vl["CruiseControl_2015"]['Cruise_Activated'] #["Stalk"]['Highbeam']
-      self.main_on = pt_cp.vl["CruiseControl_2015"]['Cruise_On']
-
     
     if self.car_fingerprint == CAR.XV2018:  
       self.steer_override = abs(self.steer_torque_driver) > 250.0
       self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
-      self.acc_active = pt_cp.vl["Stalk"]['Highbeam'] 
-      self.main_on = pt_cp.vl["Stalk"]['Highbeam']
 
     self.standstill = self.v_ego_raw < 0.01
