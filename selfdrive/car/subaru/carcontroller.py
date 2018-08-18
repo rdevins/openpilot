@@ -102,7 +102,7 @@ class CarController(object):
           left3 = 0
 
         idx = ((frame / P.STEER_STEP) % 16) + 16
-        steer2 = (chksm_steer >> 8) & 0x5
+        steer2 = (chksm_steer >> 8) & 0x1F
         steer1 =  chksm_steer - (steer2 << 8)
         byte2 = steer2 + left3
 
