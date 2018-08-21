@@ -62,18 +62,18 @@ class CarInterface(object):
       ret.mass = 1568 + std_cargo
       ret.safetyModel = car.CarParams.SafetyModels.subaru
       ret.wheelbase = 2.75
-      ret.steerRatio = 14
+      ret.steerRatio = 7
       ret.centerToFront = ret.wheelbase * 0.5 + 1
     
     # testing tuning
-    ret.steerActuatorDelay = 0.0
+    ret.steerActuatorDelay = 0.1
     ret.steerRateCost = 0
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerLimitAlert = False
     
     ret.steerKf = 0.00006
     ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-    ret.steerKpV, ret.steerKiV = [[0.6], [0.05]]
+    ret.steerKpV, ret.steerKiV = [[0.0], [0.00]]
 
     ret.steerMaxBP = [0.] # m/s
     ret.steerMaxV = [1.]

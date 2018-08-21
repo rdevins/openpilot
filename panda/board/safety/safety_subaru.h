@@ -21,7 +21,7 @@ static int subaru_tx_lin_hook(int lin_num, uint8_t *data, int len) {
 
 static int subaru_fwd_hook(int bus_num, CAN_FIFOMailBox_TypeDef *to_fwd) {
   
-  // convert little endian to hex?
+  // shifts bits 29 > 11
   int32_t addr = to_fwd->RIR >> 21;
 
   // forward CAN 0 > 1
