@@ -58,25 +58,38 @@ class CarInterface(object):
     ret.enableCamera = True
     std_cargo = 136
 
-    if candidate in [CAR.OUTBACK, CAR.XV2018]:
+    if candidate in [CAR.OUTBACK]:
       ret.mass = 1568 + std_cargo
-      ret.safetyModel = car.CarParams.SafetyModels.subaru
       ret.wheelbase = 2.75
-      ret.steerRatio = 7
       ret.centerToFront = ret.wheelbase * 0.5 + 1
-    
-    # testing tuning
-    ret.steerActuatorDelay = 0.1
-    ret.steerRateCost = 0
+
+      ret.steerRatio = 2.5
+      ret.steerActuatorDelay = 0.1
+      ret.steerRateCost = 0
+      ret.steerKf = 0.00006
+      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
+      ret.steerKpV, ret.steerKiV = [[0.08], [0.00]]
+      ret.steerMaxBP = [0.] # m/s
+      ret.steerMaxV = [1.]
+
+    elif candidate in [CAR.XV2018]:
+      ret.mass = 1568 + std_cargo
+      ret.wheelbase = 2.75
+      ret.centerToFront = ret.wheelbase * 0.5 + 1
+
+      ret.steerRatio = 7
+      ret.steerActuatorDelay = 0.1
+      ret.steerRateCost = 0
+      ret.steerKf = 0.00006
+      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
+      ret.steerKpV, ret.steerKiV = [[0.0], [0.00]]
+      ret.steerMaxBP = [0.] # m/s
+      ret.steerMaxV = [1.]
+
+    ret.safetyModel = car.CarParams.SafetyModels.subaru
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerLimitAlert = False
-    
-    ret.steerKf = 0.00006
-    ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-    ret.steerKpV, ret.steerKiV = [[0.0], [0.00]]
-
-    ret.steerMaxBP = [0.] # m/s
-    ret.steerMaxV = [1.]
+    # testing tuning
 
     # FIXME: from gm
     ret.gasMaxBP = [0.]
@@ -94,7 +107,6 @@ class CarInterface(object):
 
     ret.stoppingControl = True
     ret.startAccel = 0.8
-
     # end from gm
 
     # hardcoding honda civic 2016 touring params so they can be used to
