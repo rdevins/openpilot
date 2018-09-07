@@ -12,10 +12,10 @@ class CarControllerParams():
   def __init__(self, car_fingerprint):
     self.STEER_MAX = 2047              # max_steer 4095 
     self.STEER_STEP = 2                # how often we update the steer cmd
-    self.STEER_DELTA_UP = 25           # torque increase per refresh
-    self.STEER_DELTA_DOWN = 25         # torque decrease per refresh
+    self.STEER_DELTA_UP = 60           # torque increase per refresh
+    self.STEER_DELTA_DOWN = 60         # torque decrease per refresh
     if car_fingerprint == CAR.OUTBACK:
-      self.STEER_DRIVER_ALLOWANCE = 2000   # allowed driver torque before start limiting
+      self.STEER_DRIVER_ALLOWANCE = 5000   # allowed driver torque before start limiting
     else:
       self.STEER_DRIVER_ALLOWANCE = 250   # allowed driver torque before start limiting
     self.STEER_DRIVER_MULTIPLIER = 1   # weight driver torque heavily
@@ -70,7 +70,7 @@ class CarController(object):
       self.apply_steer_last = apply_steer
       
       
-      lkas_enabled = enabled and not CS.steer_not_allowed and CS.v_ego >= 10.
+      lkas_enabled = enabled and not CS.steer_not_allowed
 
       if not lkas_enabled:
           apply_steer = 0
