@@ -1,0 +1,177 @@
+VERSION ""
+
+
+NS_ :
+    NS_DESC_
+    CM_
+    BA_DEF_
+    BA_
+    VAL_
+    CAT_DEF_
+    CAT_
+    FILTER
+    BA_DEF_DEF_
+    EV_DATA_
+    ENVVAR_DATA_
+    SGTYPE_
+    SGTYPE_VAL_
+    BA_DEF_SGTYPE_
+    BA_SGTYPE_
+    SIG_TYPE_REF_
+    VAL_TABLE_
+    SIG_GROUP_
+    SIG_VALTYPE_
+    SIGTYPE_VALTYPE_
+    BO_TX_BU_
+    BA_DEF_REL_
+    BA_REL_
+    BA_DEF_DEF_REL_
+    BU_SG_REL_
+    BU_EV_REL_
+    BU_BO_REL_
+    SG_MUL_VAL_
+
+BS_:
+
+BU_: XXX
+
+
+BO_ 117 NEW_MSG_1: 8 XXX
+ SG_ NEW_SIGNAL_1 : 7|8@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_2 : 19|12@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_3 : 39|16@0+ (1,0) [0|131071] "" XXX
+
+BO_ 118 NEW_MSG_2: 8 XXX
+ SG_ NEW_SIGNAL_1 : 7|8@0+ (1,0) [0|127] "" XXX
+ SG_ NEW_SIGNAL_2 : 19|12@0+ (1,0) [0|4095] "" XXX
+
+BO_ 514 NEW_MSG_3: 8 XXX
+ SG_ NEW_SIGNAL_1 : 23|16@0+ (1,0) [0|32767] "" XXX
+ SG_ RPM : 7|16@0+ (1,0) [0|65535] "" XXX
+ SG_ NEW_SIGNAL_2 : 56|8@1+ (1,0) [0|127] "" XXX
+ SG_ NEW_SIGNAL_3 : 39|12@0+ (1,0) [0|255] "" XXX
+
+BO_ 357 NEW_MSG_4: 8 XXX
+ SG_ NEW_SIGNAL_2 : 4|4@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_1 : 55|16@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_5 : 3|16@0+ (1,0) [0|7] "" XXX
+ SG_ NEW_SIGNAL_3 : 19|12@0+ (1,0) [0|3] "" XXX
+
+BO_ 533 WHEEL_SPEED: 8 XXX
+ SG_ NEW_SIGNAL_1 : 7|16@0+ (1,0) [0|16383] "" XXX
+ SG_ NEW_SIGNAL_2 : 23|16@0+ (1,0) [0|65535] "" XXX
+ SG_ NEW_SIGNAL_4 : 39|16@0+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_5 : 39|1@0+ (1,0) [0|1] "" XXX
+ SG_ NEW_SIGNAL_3 : 55|16@0+ (1,0) [0|65535] "" XXX
+
+BO_ 134 Steering_Angle: 8 XXX
+ SG_ Steering_Angle : 7|28@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_3 : 26|19@0+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_1 : 56|8@1+ (1,0) [0|255] "" XXX
+
+BO_ 576 Steering_Torque: 8 XXX
+ SG_ NEW_SIGNAL_2 : 39|8@0+ (1,0) [0|127] "" XXX
+ SG_ NEW_SIGNAL_1 : 46|23@0- (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_3 : 0|8@1+ (1,0) [0|255] "" XXX
+
+BO_ 577 NEW_MSG_5: 8 XXX
+ SG_ NEW_SIGNAL_1 : 23|16@0+ (1,0) [0|1] "" XXX
+
+BO_ 582 CAM__LANEINFO: 8 XXX
+ SG_ Counter : 7|2@0+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_4 : 40|8@1+ (1,0) [0|127] "" XXX
+ SG_ NEW_SIGNAL_2 : 55|18@0+ (1,0) [0|65535] "" XXX
+ SG_ NEW_SIGNAL_1 : 5|38@0- (1,0) [0|65535] "" XXX
+
+BO_ 541 CAM__Empty: 8 XXX
+
+BO_ 605 CAM_Counter: 8 XXX
+ SG_ 7 : 0|8@1+ (1,0) [0|7] "" XXX
+ SG_ 248 : 8|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_1 : 26|4@1+ (1,0) [0|31] "" XXX
+ SG_ Reset_Counter : 23|6@0+ (1,0) [0|63] "" XXX
+ SG_ Counter : 17|4@0+ (1,0) [0|255] "" XXX
+
+BO_ 578 CAM__IDK2: 8 XXX
+ SG_ Counter_2 : 56|4@1+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_1 : 48|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_3 : 63|4@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_4 : 40|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_5 : 32|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_6 : 24|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_10 : 3|8@0+ (1,0) [0|1] "" XXX
+ SG_ Counter : 7|4@0+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_7 : 9|10@0+ (1,0) [0|255] "" XXX
+
+BO_ 579 CAM_LKAS: 8 XXX
+ SG_ 8 : 19|1@1+ (1,0) [0|8589934591] "" XXX
+ SG_ 128 : 23|1@0+ (1,0) [0|3] "" XXX
+ SG_ Checksum : 56|8@1+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_1 : 29|1@0+ (1,0) [0|65535] "" XXX
+ SG_ NEW_SIGNAL_5 : 33|1@1+ (1,0) [0|7] "" XXX
+ SG_ Counter : 7|4@0+ (1,0) [0|3] "" XXX
+ SG_ LKAS_Request : 3|12@0+ (1,-2048) [0|15] "" XXX
+
+BO_ 580 CAM__IDK: 8 XXX
+ SG_ NEW_SIGNAL_1 : 55|16@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_2 : 47|8@0+ (1,0) [0|65535] "" XXX
+ SG_ NEW_SIGNAL_3 : 32|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_4 : 24|8@1+ (1,0) [0|31] "" XXX
+ SG_ NEW_SIGNAL_7 : 15|8@0+ (1,0) [0|1] "" XXX
+ SG_ NEW_SIGNAL_6 : 16|8@1+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_5 : 0|8@1+ (1,0) [0|127] "" XXX
+
+BO_ 581 CAM_IDK3: 8 XXX
+ SG_ NEW_SIGNAL_1 : 0|8@1+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_2 : 56|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_3 : 48|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_4 : 40|8@1+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_5 : 32|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_6 : 24|8@1+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_7 : 16|8@1+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_8 : 8|6@1+ (1,0) [0|255] "" XXX
+
+BO_ 863 CAM__STATUS: 8 XXX
+ SG_ NEW_SIGNAL_1 : 32|1@0+ (1,0) [0|32767] "" XXX
+ SG_ NEW_SIGNAL_3 : 31|4@0+ (1,0) [0|1] "" XXX
+ SG_ NEW_SIGNAL_5 : 4|2@0+ (1,0) [0|32767] "" XXX
+ SG_ NEW_SIGNAL_2 : 40|1@1+ (1,0) [0|7] "" XXX
+ SG_ NEW_SIGNAL_4 : 15|4@0+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_6 : 0|3@1+ (1,0) [0|7] "" XXX
+
+BO_ 1157 CAM__Empty2: 8 XXX
+
+BO_ 1160 CAM__Empty3: 8 XXX
+ SG_ NEW_SIGNAL_1 : 47|24@0+ (1,0) [0|16777215] "" XXX
+
+BO_ 1088 CAM__STATUS2: 8 XXX
+ SG_ NEW_SIGNAL_2 : 0|2@1+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_3 : 8|3@1+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_1 : 6|1@0+ (1,0) [0|65535] "" XXX
+ SG_ NEW_SIGNAL_4 : 57|2@0+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_5 : 62|1@0+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_7 : 54|1@0+ (1,0) [0|31] "" XXX
+ SG_ NEW_SIGNAL_6 : 13|1@0+ (1,0) [0|15] "" XXX
+
+BO_ 1479 NEW_MSG_470: 8 XXX
+
+BO_ 1456 NEW_MSG_300: 8 XXX
+
+BO_ 1446 NEW_MSG_a600: 8 XXX
+
+BO_ 1416 NEW_MSG_0800: 8 XXX
+
+BO_ 1086 NEW_MSG_6: 8 XXX
+ SG_ NEW_SIGNAL_1 : 8|4@1+ (1,0) [0|3] "" XXX
+ SG_ NEW_SIGNAL_2 : 16|4@1+ (1,0) [0|15] "" XXX
+
+BO_ 977 NEW_MSG_7: 8 XXX
+ SG_ NEW_SIGNAL_1 : 48|4@1+ (1,0) [0|7] "" XXX
+ SG_ NEW_SIGNAL_2 : 56|4@1+ (1,0) [0|7] "" XXX
+
+BO_ 1085 NEW_MSG_8: 8 XXX
+ SG_ NEW_SIGNAL_1 : 16|4@1+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_2 : 31|8@0+ (1,0) [0|15] "" XXX
+
+BO_ 159 NEW_MSG_9: 8 XXX
+ SG_ NEW_SIGNAL_1 : 50|4@1+ (1,0) [0|15] "" XXX
