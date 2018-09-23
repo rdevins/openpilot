@@ -72,20 +72,6 @@ class CarInterface(object):
       ret.steerMaxBP = [0.] # m/s
       ret.steerMaxV = [1.]
 
-    elif candidate in [CAR.XV2018]:
-      ret.mass = 1568 + std_cargo
-      ret.wheelbase = 2.75
-      ret.centerToFront = ret.wheelbase * 0.5 + 1
-
-      ret.steerRatio = 7
-      ret.steerActuatorDelay = 0.1
-      ret.steerRateCost = 0
-      ret.steerKf = 0.00006
-      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-      ret.steerKpV, ret.steerKiV = [[0.0], [0.00]]
-      ret.steerMaxBP = [0.] # m/s
-      ret.steerMaxV = [1.]
-
     ret.safetyModel = car.CarParams.SafetyModels.mazda
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerLimitAlert = False
@@ -156,12 +142,12 @@ class CarInterface(object):
 
     # torque and user override. Driver awareness
     # timer resets when the user uses the steering wheel.
-    ret.steeringTorque = self.CS.steer_torque_driver
+    #ret.steeringTorque = self.CS.steer_torque_driver
 
     # cruise state
-    ret.cruiseState.available = bool(self.CS.main_on)
-    ret.leftBlinker = self.CS.left_blinker_on
-    ret.rightBlinker = self.CS.right_blinker_on
+    #ret.cruiseState.available = bool(self.CS.main_on)
+    #ret.leftBlinker = self.CS.left_blinker_on
+    #ret.rightBlinker = self.CS.right_blinker_on
 
 
     buttonEvents = []
@@ -192,10 +178,10 @@ class CarInterface(object):
     else:
       self.can_invalid_count = 0
 
-    if self.CS.acc_active and not self.acc_active_prev:
-      events.append(create_event('pcmEnable', [ET.ENABLE]))
-    if not self.CS.acc_active:
-      events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
+    #if self.CS.acc_active and not self.acc_active_prev:
+    #  events.append(create_event('pcmEnable', [ET.ENABLE]))
+    #if not self.CS.acc_active:
+    #  events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
     # handle button presses
     for b in ret.buttonEvents:
@@ -209,7 +195,7 @@ class CarInterface(object):
     ret.events = events
 
     # update previous brake/gas pressed
-    self.acc_active_prev = self.CS.acc_active
+    #self.acc_active_prev = self.CS.acc_active
 
 
     # cast to reader so it can't be modified

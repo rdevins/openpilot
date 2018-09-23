@@ -11,8 +11,8 @@ def get_powertrain_can_parser(CP, canbus):
     # sig_name, sig_address, default
     #("LEFT_BLINKER", "Dashlights", 0), 
     #("RIGHT_BLINKER", "Dashlights", 0),
-    ("Steering_Angle", "Steering_Angle", 0),
-    ("Speed", "Speed", 0),
+    ("STEERING_SENSORS", "STEER_ANGLE", 0),
+    ("ENGINE_DATA", "SPEED", 0),
     #("FL", "WHEEL_SPEEDS", 0), 
     #("FR", "WHEEL_SPEEDS", 0),
     #("RL", "WHEEL_SPEEDS", 0), 
@@ -30,8 +30,8 @@ def get_powertrain_can_parser(CP, canbus):
     #remove("ES_RPM", 20),
     #remove("ES_LDW", 20),
     #remove("ES_CruiseThrottle", 20),
-    ("Steering_Angle", 100),
-    ("Speed", 50),
+    ("STEERING_SENSORS", 100),
+    ("ENGINE_DATA", 50),
     #("WHEEL_SPEEDS", 50),
     #("Steering_Torque", 100),
   ]
@@ -71,7 +71,7 @@ class CarState(object):
     #self.v_wheel_rr = pt_cp.vl["WHEEL_SPEEDS"]['RR'] * CV.KPH_TO_MS
     #speed_estimate = (self.v_wheel_fl + self.v_wheel_fr + self.v_wheel_rl + self.v_wheel_rr) / 4.0
 
-    speed_estimate = pt_cp.vl["Speed"]['Speed'] * CV.KPH_TO_MS
+    speed_estimate = pt_cp.vl["ENGINE_DATA"]['SPEED'] * CV.KPH_TO_MS
 
     self.v_ego_raw = speed_estimate
     # FIXME
@@ -89,7 +89,7 @@ class CarState(object):
       
     if self.car_fingerprint == CAR.CX5:
       self.steer_override = abs(self.steer_torque_driver) > 8000.0
-      self.angle_steers = pt_cp.vl["Steering_Angle"]['Steering_Angle'] + 6.5
+      self.angle_steers = pt_cp.vl["STEERING_SENSORS"]['STEER_ANGLE']
     
 
     self.standstill = self.v_ego_raw < 0.01
