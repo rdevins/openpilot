@@ -1,12 +1,12 @@
 from selfdrive.car.mazda.values import CAR, DBC
 
-def create_steering_control(packer, bus, car_fingerprint, idx, steer1, byte2, checksum):
+def create_steering_control(packer, bus, car_fingerprint, idx, steer, checksum):
   if car_fingerprint == CAR.CX5:
     values = {
-      "Byte0": idx,
-      "Byte1": steer1,
-      "Byte2": byte2,
-      "Byte3": 1 if steer1 + byte2 != 0 else 0,
+      "Counter": idx,
+      "LKAS_Request": steer,
+      "NEW_SIGNAL_1": 1,
+      "NEW_SIGNAL_5": 1,
       "Checksum": checksum
     }
     

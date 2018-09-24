@@ -10,10 +10,10 @@ from selfdrive.can.packer import CANPacker
 
 class CarControllerParams():
   def __init__(self, car_fingerprint):
-    self.STEER_MAX = 2047              # max_steer 4095 
-    self.STEER_STEP = 2                # how often we update the steer cmd
-    self.STEER_DELTA_UP = 60           # torque increase per refresh
-    self.STEER_DELTA_DOWN = 60         # torque decrease per refresh
+    self.STEER_MAX = 256              # max_steer 2048
+    self.STEER_STEP = 5                # how often we update the steer cmd
+    self.STEER_DELTA_UP = 20           # torque increase per refresh
+    self.STEER_DELTA_DOWN = 20         # torque decrease per refresh
     if car_fingerprint == CAR.CX5:
       self.STEER_DRIVER_ALLOWANCE = 5000   # allowed driver torque before start limiting
     else:
@@ -78,20 +78,15 @@ class CarController(object):
       if self.car_fingerprint == CAR.CX5:
         
         if apply_steer != 0:
-          chksm_steer = apply_steer * -1
-          chksm_engage = 1
+          chksm_steer = apply_steer
         else:
           chksm_steer = 0
-          chksm_engage = 0
         
         #counts from 0 to 7 then back to 0
-        idx = (frame / P.STEER_STEP) % 8
-        steer2 = (chksm_steer >> 8) & 0x1F
-        steer1 =  chksm_steer - (steer2 << 8)
-        byte2 = steer2
-        checksum = (idx + steer2 + steer1 + chksm_engage) % 256
+        idx = (frame / P.STEER_STEP) % 16
+        checksum = (207 - (idx + steer)) % 256
         
-      can_sends.append(mazdacan.create_steering_control(self.packer_pt, canbus.powertrain, CS.CP.carFingerprint, idx, steer1, byte2, checksum))
+      can_sends.append(mazdacan.create_steering_control(self.packer_pt, canbus.powertrain, CS.CP.carFingerprint, idx, steer, checksum))
 
 
     sendcan.send(can_list_to_can_capnp(can_sends, msgtype='sendcan').to_bytes())
