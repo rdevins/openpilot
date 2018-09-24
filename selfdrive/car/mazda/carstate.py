@@ -11,8 +11,8 @@ def get_powertrain_can_parser(CP, canbus):
     # sig_name, sig_address, default
     #("LEFT_BLINKER", "Dashlights", 0), 
     #("RIGHT_BLINKER", "Dashlights", 0),
-    ("STEERING_SENSORS", "STEER_ANGLE", 0),
-    ("ENGINE_DATA", "SPEED", 0),
+    ("STEER_ANGLE", "STEERING_SENSORS", 0),
+    ("SPEED", "ENGINE_DATA", 0),
     #("FL", "WHEEL_SPEEDS", 0), 
     #("FR", "WHEEL_SPEEDS", 0),
     #("RL", "WHEEL_SPEEDS", 0), 
