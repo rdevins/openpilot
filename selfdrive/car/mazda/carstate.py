@@ -17,7 +17,7 @@ def get_powertrain_can_parser(CP, canbus):
     ("RL", "WHEEL_SPEEDS", 0), 
     ("RR", "WHEEL_SPEEDS", 0), 
     ("Steer_Torque_Sensor", "Steering_Torque", 0),
-    ("Cruise_On", "CruiseControl", 0), 
+    ("Cruise_Activated", "CruiseControl", 0), 
   ]
   
   checks = [
@@ -76,8 +76,8 @@ class CarState(object):
     self.right_blinker_on = pt_cp.vl["BLINK_INFO"]['RIGHT_BLINK'] == 1
 
     self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
-    self.acc_active = pt_cp.vl["CruiseControl"]['Cruise_On']
-    self.main_on = pt_cp.vl["CruiseControl"]['Cruise_On']
+    self.acc_active = pt_cp.vl["CruiseControl"]['Cruise_Activated']
+    self.main_on = pt_cp.vl["CruiseControl"]['Cruise_Activated']
       
     self.steer_override = abs(self.steer_torque_driver) > 150 #fixme
     self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle'] 
