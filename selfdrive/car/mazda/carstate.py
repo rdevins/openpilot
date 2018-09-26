@@ -9,6 +9,8 @@ def get_powertrain_can_parser(CP, canbus):
   # this function generates lists for signal, messages and initial values
   signals = [
     # sig_name, sig_address, default
+    ("LEFT_BLINK", "BLINK_INFO", 0), 
+    ("RIGHT_BLINK", "BLINK_INFO", 0),
     ("Steering_Angle", "Steering", 0),
     ("FL", "WHEEL_SPEEDS", 0), 
     ("FR", "WHEEL_SPEEDS", 0),
@@ -20,6 +22,7 @@ def get_powertrain_can_parser(CP, canbus):
   
   checks = [
     # sig_address, frequency
+    ("BLINK_INFO", 10),
     ("Steering", 100),
     ("WHEEL_SPEEDS", 120),
     ("Steering_Torque", 100),
@@ -66,6 +69,11 @@ class CarState(object):
     v_ego_x = self.v_ego_kf.update(speed_estimate)
     self.v_ego = float(v_ego_x[0])
     self.a_ego = float(v_ego_x[1])
+
+    self.prev_left_blinker_on = self.left_blinker_on
+    self.prev_right_blinker_on = self.right_blinker_on
+    self.left_blinker_on = pt_cp.vl["BLINK_INFO"]['LEFT_BLINK'] == 1
+    self.right_blinker_on = pt_cp.vl["BLINK_INFO"]['RIGHT_BLINK'] == 1
 
     self.steer_torque_driver = pt_cp.vl["Steering_Torque"]['Steer_Torque_Sensor']
     self.acc_active = pt_cp.vl["CruiseControl"]['Cruise_On']
