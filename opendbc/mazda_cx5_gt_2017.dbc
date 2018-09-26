@@ -78,12 +78,12 @@ BO_ 533 WHEEL_SPEEDS: 8 XXX
  SG_ FL : 7|16@0+ (1,0) [0|16383] "" XXX
  SG_ RR : 55|16@0+ (1,0) [0|65535] "" XXX
 
-BO_ 134 STEERING_SENSORS: 8 XXX
+BO_ 134 Steering: 8 XXX
  SG_ NEW_SIGNAL_3 : 26|19@0+ (1,0) [0|15] "" XXX
- SG_ STEER_ANGLE : 7|28@0+ (0.00002502,-1616.88) [0|255] "" XXX
  SG_ COUNTER : 55|2@0+ (1,0) [0|255] "" XXX
  SG_ NEW_SIGNAL_2 : 48|6@1+ (1,0) [0|7] "" XXX
  SG_ NEW_SIGNAL_1 : 63|8@0+ (1,0) [0|255] "" XXX
+ SG_ Steering_Angle : 7|28@0+ (0.00002502,-1616.88) [0|255] "" XXX
 
 BO_ 576 Steering_Torque: 8 XXX
  SG_ NEW_SIGNAL_2 : 39|8@0+ (1,0) [0|127] "" XXX
