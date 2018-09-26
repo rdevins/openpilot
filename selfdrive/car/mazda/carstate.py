@@ -34,6 +34,10 @@ class CarState(object):
     self.CP = CP
     
     self.car_fingerprint = CP.carFingerprint
+    self.left_blinker_on = False
+    self.prev_left_blinker_on = False
+    self.right_blinker_on = False
+    self.prev_right_blinker_on = False
     self.steer_torque_driver = 0
     self.steer_not_allowed = False
     self.main_on = False
