@@ -18,17 +18,14 @@ int main( )
   DifferentialEquation f;
 
   DifferentialState x_ego, v_ego, a_ego;
-  DifferentialState x_l, v_l, t;
+  DifferentialState x_l, v_l, a_l;
 
-  OnlineData lambda, a_l_0;
+  OnlineData lambda;
 
   Control j_ego;
 
   auto desired = 4.0 + RW(v_ego, v_l);
   auto d_l = x_l - x_ego;
-
-  // Directly calculate a_l to prevent instabilites due to discretization
-  auto a_l = a_l_0 * exp(-lambda * t * t / 2);
 
   // Equations of motion
   f << dot(x_ego) == v_ego;
@@ -37,7 +34,7 @@ int main( )
 
   f << dot(x_l) == v_l;
   f << dot(v_l) == a_l;
-  f << dot(t) == 1;
+  f << dot(a_l) == -lambda * a_l;
 
   // Running cost
   Function h;
@@ -79,7 +76,7 @@ int main( )
   ocp.minimizeLSQEndTerm(QN, hN);
 
   ocp.subjectTo( 0.0 <= v_ego);
-  ocp.setNOD(2);
+  ocp.setNOD(1);
 
   OCPexport mpc(ocp);
   mpc.set( HESSIAN_APPROXIMATION, GAUSS_NEWTON );
@@ -97,7 +94,7 @@ int main( )
   mpc.set( GENERATE_MATLAB_INTERFACE, NO );
   mpc.set( GENERATE_SIMULINK_INTERFACE, NO );
 
-  if (mpc.exportCode( "lib_mpc_export" ) != SUCCESSFUL_RETURN)
+  if (mpc.exportCode( "mpc_export" ) != SUCCESSFUL_RETURN)
     exit( EXIT_FAILURE );
 
   mpc.printDimensionsQP( );

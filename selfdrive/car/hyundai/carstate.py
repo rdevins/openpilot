@@ -17,19 +17,11 @@ def get_can_parser(CP):
     ("YAW_RATE", "ESP12", 0),
 
     ("CF_Gway_DrvSeatBeltInd", "CGW4", 1),
-<<<<<<< HEAD
-=======
-
->>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
     ("CF_Gway_DrvSeatBeltSw", "CGW1", 0),
     ("CF_Gway_TSigLHSw", "CGW1", 0),
     ("CF_Gway_TurnSigLh", "CGW1", 0),
     ("CF_Gway_TSigRHSw", "CGW1", 0),
     ("CF_Gway_TurnSigRh", "CGW1", 0),
-<<<<<<< HEAD
-=======
-    ("CF_Gway_ParkBrakeSw", "CGW1", 0),
->>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
 
     ("BRAKE_ACT", "EMS12", 0),
     ("PV_AV_CAN", "EMS12", 0),
@@ -157,11 +149,7 @@ class CarState(object):
     self.brake_pressed = cp.vl["TCS13"]['DriverBraking']
     self.esp_disabled = cp.vl["TCS15"]['ESC_Off_Step']
 
-<<<<<<< HEAD
     self.park_brake = False
-=======
-    self.park_brake = cp.vl["CGW1"]['CF_Gway_ParkBrakeSw']
->>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
     self.main_on = True
     self.acc_active = cp.vl["SCC12"]['ACCMode'] != 0
     self.pcm_acc_status = int(self.acc_active)

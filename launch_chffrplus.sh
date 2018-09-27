@@ -6,19 +6,11 @@ fi
 
 function launch {
   # apply update
-<<<<<<< HEAD
 #  if [ "$(git rev-parse HEAD)" != "$(git rev-parse @{u})" ]; then
 #     git reset --hard @{u} &&
 #     git clean -xdf &&
 #     exec "${BASH_SOURCE[0]}"
 #  fi
-=======
-  if [ "$(git rev-parse HEAD)" != "$(git rev-parse @{u})" ]; then
-     git reset --hard @{u} &&
-     git clean -xdf &&
-     exec "${BASH_SOURCE[0]}"
-  fi
->>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
 
   # no cpu rationing for now
   echo 0-3 > /dev/cpuset/background/cpus
