@@ -42,7 +42,7 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     speedTooLow @17;
     outOfSpace @18;
     overheat @19;
-    calibrationInProgress @20;
+    calibrationIncomplete @20;
     calibrationInvalid @21;
     controlsMismatch @22;
     pcmEnable @23;
@@ -68,6 +68,12 @@ struct CarEvent @0x9b1657f34caf3ad3 {
     preDriverUnresponsive @43;
     promptDriverUnresponsive @44;
     driverUnresponsive @45;
+<<<<<<< HEAD
+=======
+    belowSteerSpeed @46;
+    calibrationProgress @47;
+    lowBattery @48;
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
   }
 }
 
@@ -284,6 +290,7 @@ struct CarParams {
   enableApgs @28 :Bool; # advanced parking guidance system
 
   minEnableSpeed @17 :Float32;
+  minSteerSpeed @49 :Float32;
   safetyModel @18 :Int16;
   safetyParam @41 :Int16;
 
@@ -310,7 +317,10 @@ struct CarParams {
     hyundai @8;
     chrysler @9;
     tesla @10;
+<<<<<<< HEAD
     subaru @11;
+=======
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
   }
 
   # things about the car in the manual

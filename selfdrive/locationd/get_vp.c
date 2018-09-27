@@ -10,8 +10,13 @@ int get_intersections(double *lines, double *intersections, long long n) {
       D = L1[0] * L2[1] - L1[1] * L2[0];
       Dx = L1[2] * L2[1] - L1[1] * L2[2];
       Dy = L1[0] * L2[2] - L1[2] * L2[0];
+<<<<<<< HEAD
       // only intersect lines from different quadrants
       if ((D != 0) && (L1[0]*L2[0]*L1[1]*L2[1] < 0)){
+=======
+      // only intersect lines from different quadrants and only left-right crossing
+      if ((D != 0) && (L1[0]*L2[0]*L1[1]*L2[1] < 0) && (L1[0]*L2[0] < 0)){
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
         x = Dx / D;
         y = Dy / D;
         if ((0 < x) &&

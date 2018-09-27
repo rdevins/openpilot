@@ -57,6 +57,11 @@ model_frame_from_road_frame = np.dot(model_intrinsics,
 bigmodel_frame_from_road_frame = np.dot(bigmodel_intrinsics,
   get_view_frame_from_road_frame(0, 0, 0, model_height))
 
+<<<<<<< HEAD
+=======
+model_frame_from_bigmodel_frame = np.dot(model_intrinsics, np.linalg.inv(bigmodel_intrinsics))
+
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
 # 'camera from model camera'
 def get_model_height_transform(camera_frame_from_road_frame, height):
   camera_frame_from_road_ground = np.dot(camera_frame_from_road_frame, np.array([

@@ -36,6 +36,7 @@ extern "C" void compute_aligned_width_and_height(int width,
                                       int *aligned_h);
 #endif
 
+<<<<<<< HEAD
 VisionImg visionimg_alloc_rgb24(int width, int height, VisionBuf *out_buf) {
 
   int aligned_w = 0, aligned_h = 0;
@@ -44,6 +45,19 @@ VisionImg visionimg_alloc_rgb24(int width, int height, VisionBuf *out_buf) {
 #else
   aligned_w = width; aligned_h = height;
 #endif
+=======
+void visionimg_compute_aligned_width_and_height(int width, int height, int *aligned_w, int *aligned_h) {
+#ifdef QCOM
+  compute_aligned_width_and_height(ALIGN(width, 32), ALIGN(height, 32), 3, 0, 0, 512, aligned_w, aligned_h);
+#else
+  *aligned_w = width; *aligned_h = height;
+#endif
+}
+
+VisionImg visionimg_alloc_rgb24(int width, int height, VisionBuf *out_buf) {
+  int aligned_w = 0, aligned_h = 0;
+  visionimg_compute_aligned_width_and_height(width, height, &aligned_w, &aligned_h);
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
 
   int stride = aligned_w * 3;
   size_t size = aligned_w * aligned_h * 3;

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 #include "selfdrive/common/params.h"
+=======
+#include "common/params.h"
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -13,8 +17,13 @@
 #include <map>
 #include <string>
 
+<<<<<<< HEAD
 #include "selfdrive/common/util.h"
 #include "selfdrive/common/utilpp.h"
+=======
+#include "common/util.h"
+#include "common/utilpp.h"
+>>>>>>> a422246dc30bce11e970514f13f7c110f4470cc3
 
 namespace {
 
