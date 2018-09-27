@@ -118,6 +118,7 @@ In Progress Cars
   - Even though the LX have TSS-P, it does not have Steering Assist and is not supported.
 - All Hyundai with SmartSense.
 - All Kia with SCC and LKAS.
+- Subaru
 
 How can I add support for my car?
 ------
