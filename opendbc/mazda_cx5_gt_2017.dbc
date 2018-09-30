@@ -45,8 +45,8 @@ BO_ 117 STEERING_ANG: 8 XXX
  SG_ NEW_SIGNAL_3 : 51|2@0+ (1,0) [0|63] "" XXX
 
 BO_ 118 NEW_MSG_2: 8 XXX
- SG_ NEW_SIGNAL_1 : 7|8@0+ (1,0) [0|127] "" XXX
  SG_ NEW_SIGNAL_2 : 19|12@0+ (1,0) [0|4095] "" XXX
+ SG_ CTR : 7|8@0+ (1,0) [0|127] "" XXX
 
 BO_ 514 ENGINE_DATA: 8 XXX
  SG_ RPM : 7|16@0+ (1,0) [0|65535] "" XXX
@@ -73,12 +73,12 @@ BO_ 357 PEDALS: 8 XXX
  SG_ CHKSUM : 63|8@0+ (1,0) [0|15] "" XXX
 
 BO_ 533 WHEEL_SPEEDS: 8 XXX
- SG_ RL : 39|12@0+ (1,0) [0|15] "" XXX
- SG_ RR : 55|12@0+ (1,0) [0|65535] "" XXX
- SG_ FL : 7|12@0+ (1,0) [0|16383] "" XXX
- SG_ FR : 23|12@0+ (1,0) [0|65535] "" XXX
+ SG_ FL : 7|16@0+ (0.01,-100) [0|16383] "" XXX
+ SG_ RL : 39|16@0+ (0.01,-100) [0|15] "" XXX
+ SG_ RR : 55|16@0+ (0.01,-100) [0|65535] "" XXX
+ SG_ FR : 23|16@0+ (0.01,-100) [0|65535] "" XXX
 
-BO_ 134 Steering: 8 XXX
+BO_ 134 Steering2: 8 XXX
  SG_ NEW_SIGNAL_3 : 39|16@0+ (1,0) [0|15] "" XXX
  SG_ COUNTER : 55|2@0+ (1,0) [0|255] "" XXX
  SG_ NEW_SIGNAL_2 : 48|6@1+ (1,0) [0|7] "" XXX
@@ -88,7 +88,7 @@ BO_ 134 Steering: 8 XXX
  SG_ NEW_SIGNAL_5 : 18|3@0+ (1,0) [0|1] "" XXX
  SG_ NEW_SIGNAL_7 : 24|3@1+ (1,0) [0|7] "" XXX
  SG_ CTR_2 : 28|3@1+ (1,0) [0|7] "" XXX
- SG_ Steering_Angle : 7|16@0+ (0.1,-1600) [0|255] "" XXX
+ SG_ Steering_Angle : 7|16@0+ (0.1,-1600) [-500|500] "deg" XXX
 
 BO_ 576 Steering_Torque: 8 XXX
  SG_ NEW_SIGNAL_2 : 39|8@0+ (1,0) [0|127] "" XXX
@@ -275,13 +275,12 @@ BO_ 867 NEW_MSG_17: 8 XXX
  SG_ NEW_SIGNAL_6 : 47|8@0+ (1,0) [0|255] "" XXX
  SG_ COUNTER : 63|8@0+ (1,0) [0|255] "" XXX
 
-BO_ 130 STEER_INFO: 8 XXX
- SG_ NEW_SIGNAL_1 : 23|8@0+ (1,0) [0|255] "" XXX
- SG_ NEW_SIGNAL_2 : 31|7@0+ (1,0) [0|127] "" XXX
- SG_ NEW_SIGNAL_3 : 39|8@0+ (1,0) [0|255] "" XXX
- SG_ NEW_SIGNAL_4 : 47|8@0+ (1,0) [0|255] "" XXX
+BO_ 130 Steering: 8 XXX
+ SG_ NEW_SIGNAL_3 : 35|3@0+ (1,0) [0|255] "" XXX
  SG_ NEW_SIGNAL_5 : 55|8@0+ (1,0) [0|255] "" XXX
  SG_ NEW_SIGNAL_6 : 63|8@0+ (1,0) [0|255] "" XXX
+ SG_ CTR : 47|8@0+ (1,0) [0|255] "" XXX
+ SG_ Steering_Angle : 23|16@0+ (0.05,-1600) [500|-500] "" XXX
 
 BO_ 120 NEW_MSG_18: 8 XXX
  SG_ NEW_SIGNAL_1 : 7|8@0+ (1,0) [0|255] "" XXX
@@ -289,7 +288,7 @@ BO_ 120 NEW_MSG_18: 8 XXX
  SG_ NEW_SIGNAL_3 : 23|8@0+ (1,0) [0|255] "" XXX
  SG_ NEW_SIGNAL_4 : 31|8@0+ (1,0) [0|255] "" XXX
  SG_ NEW_SIGNAL_5 : 39|8@0+ (1,0) [0|255] "" XXX
- SG_ NEW_SIGNAL_6 : 55|8@0+ (1,0) [0|255] "" XXX
+ SG_ CTR : 55|8@0+ (1,0) [0|255] "" XXX
 
 BO_ 304 NEW_MSGRPM: 8 XXX
  SG_ NEW_SIGNAL_1 : 47|16@0+ (1,0) [0|255] "" XXX
@@ -489,6 +488,20 @@ BO_ 539 CRZ_INFO: 8 XXX
  SG_ ACC_ACTIVE : 33|1@0+ (1,0) [0|1] "" XXX
  SG_ ACCEL_CMD : 31|10@0+ (1,0) [0|1] "" XXX
  SG_ NEW_SIGNAL_3 : 37|1@0+ (1,0) [0|255] "" XXX
+
+BO_ 121 NEW_MSG_1: 8 XXX
+ SG_ NEW_SIGNAL_1 : 4|4@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_2 : 0|1@0+ (1,0) [0|1] "" XXX
+ SG_ NEW_SIGNAL_3 : 15|8@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_4 : 25|2@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_5 : 29|1@0+ (1,0) [0|15] "" XXX
+ SG_ NEW_SIGNAL_6 : 39|8@0+ (1,0) [0|255] "" XXX
+ SG_ CTR : 55|8@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_7 : 63|8@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_8 : 41|2@0+ (1,0) [0|255] "" XXX
+ SG_ NEW_SIGNAL_9 : 47|1@0+ (1,0) [0|63] "" XXX
+ SG_ NEW_SIGNAL_10 : 46|1@0+ (1,0) [0|1] "" XXX
+ SG_ NEW_SIGNAL_11 : 45|1@0+ (1,0) [0|1] "" XXX
 
 
 
