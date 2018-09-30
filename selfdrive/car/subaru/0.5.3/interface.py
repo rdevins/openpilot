@@ -58,16 +58,16 @@ class CarInterface(object):
     ret.enableCamera = True
     std_cargo = 136
 
-    if candidate in [CAR.OUTBACK, CAR.LEGACY]:
+    if candidate in [CAR.OUTBACK]:
       ret.mass = 1568 + std_cargo
       ret.wheelbase = 2.75
       ret.centerToFront = ret.wheelbase * 0.5 + 1
-      
+
       ret.steerRatio = 8.3
       ret.steerActuatorDelay = 0.3
       ret.steerRateCost = 0
       ret.steerKf = 0.00006
-      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]] # m/s
+      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
       ret.steerKpV, ret.steerKiV = [[0.0003], [0.00]]
       ret.steerMaxBP = [0.] # m/s
       ret.steerMaxV = [1.]
