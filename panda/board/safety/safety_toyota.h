@@ -48,9 +48,9 @@ static void toyota_rx_hook(CAN_FIFOMailBox_TypeDef *to_push) {
   }
 
   // enter controls on rising edge of ACC, exit controls on ACC off
-  if ((to_push->RIR>>21) == 0x1D2) {
-    // 4 bits: 55-52
-    int cruise_engaged = to_push->RDLR & 0x20;
+  if ((to_push->RIR>>21) == 0x361) {
+    // 1 bit: 2
+    int cruise_engaged = to_push->RDLR & 0x2;
     if (cruise_engaged && !toyota_cruise_engaged_last) {
       controls_allowed = 1;
     } else if (!cruise_engaged) {
