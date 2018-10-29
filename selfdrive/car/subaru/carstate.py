@@ -85,7 +85,7 @@ class CarState(object):
       
     if self.car_fingerprint == CAR.OUTBACK:
       self.steer_override = abs(self.steer_torque_driver) > 8000.0
-      self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle'] + 6.5
+      self.angle_steers = pt_cp.vl["Steering"]['Steering_Angle']
     
     if self.car_fingerprint == CAR.XV2018:  
       self.steer_override = abs(self.steer_torque_driver) > 250.0
