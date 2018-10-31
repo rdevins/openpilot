@@ -38,7 +38,6 @@ CXXFLAGS += -DQCOM
 OBJS = ui.o \
        ../common/glutil.o \
        ../common/visionipc.o \
-       ../common/ipc.o \
        ../common/visionimg.o \
        ../common/visionbuf_ion.o \
        ../common/framebuffer.o \

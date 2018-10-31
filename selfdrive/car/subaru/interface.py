@@ -54,55 +54,40 @@ class CarInterface(object):
 
     ret.enableCruise = False
 
-    # TODO: gate this on detection
+    #TODO: gate this on detection
     ret.enableCamera = True
     std_cargo = 136
 
-    if candidate == CAR.OUTBACK:
+    if candidate in [CAR.OUTBACK]:
       ret.mass = 1568 + std_cargo
       ret.wheelbase = 2.75
-      ret.centerToFront = ret.wheelbase * 0.5
-      
-      ret.steerRatio = 14
+      ret.centerToFront = ret.wheelbase * 0.5 + 1
+      ret.steerRatio = 8.6
       ret.steerActuatorDelay = 0.3
       ret.steerRateCost = 0
-      ret.steerKf = 0.000002
-      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]] # m/s
-      ret.steerKpV, ret.steerKiV = [[0.003], [0.00]]
-      ret.steerMaxBP = [0.] # m/s
-      ret.steerMaxV = [1.]
-    elif candidate == CAR.LEGACY:
-      ret.mass = 1568 + std_cargo
-      ret.wheelbase = 2.75
-      ret.centerToFront = ret.wheelbase * 0.5
-      
-      ret.steerRatio = 14
-      ret.steerActuatorDelay = 0.3
-      ret.steerRateCost = 0
-      ret.steerKf = 0.000002
-      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]] # m/s
-      ret.steerKpV, ret.steerKiV = [[0.003], [0.00]]
+      ret.steerKf = 0.00006
+      ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
+      ret.steerKpV, ret.steerKiV = [[0.0003], [0.00]]
       ret.steerMaxBP = [0.] # m/s
       ret.steerMaxV = [1.]
 
     elif candidate in [CAR.XV2018]:
       ret.mass = 1568 + std_cargo
       ret.wheelbase = 2.75
-      ret.centerToFront = ret.wheelbase * 0.5 
+      ret.centerToFront = ret.wheelbase * 0.5 + 1
 
-      ret.steerRatio = 14
+      ret.steerRatio = 6
       ret.steerActuatorDelay = 0.1
-      ret.steerRateCost = 1
-      ret.steerKf = 0.00002
+      ret.steerRateCost = 0
+      ret.steerKf = 0.00006
       ret.steerKiBP, ret.steerKpBP = [[0.], [0.]]
-      ret.steerKpV, ret.steerKiV = [[0.003], [0.00]]
+      ret.steerKpV, ret.steerKiV = [[0.0], [0.00]]
       ret.steerMaxBP = [0.] # m/s
       ret.steerMaxV = [1.]
 
     ret.safetyModel = car.CarParams.SafetyModels.subaru
     ret.steerControlType = car.CarParams.SteerControlType.torque
     ret.steerLimitAlert = False
-    ret.steerRatioRear = 0.
     # testing tuning
 
     # FIXME: from gm
@@ -164,17 +149,12 @@ class CarInterface(object):
     ret.vEgoRaw = self.CS.v_ego_raw
     ret.yawRate = self.VM.yaw_rate(self.CS.angle_steers * CV.DEG_TO_RAD, self.CS.v_ego)
     ret.standstill = self.CS.standstill
-    ret.wheelSpeeds.fl = self.CS.v_wheel_fl
-    ret.wheelSpeeds.fr = self.CS.v_wheel_fr
-    ret.wheelSpeeds.rl = self.CS.v_wheel_rl
-    ret.wheelSpeeds.rr = self.CS.v_wheel_rr
-    
+
     # steering wheel
     ret.steeringAngle = self.CS.angle_steers
 
     # torque and user override. Driver awareness
     # timer resets when the user uses the steering wheel.
-    ret.steeringPressed = self.CS.steer_override
     ret.steeringTorque = self.CS.steer_torque_driver
 
     # cruise state

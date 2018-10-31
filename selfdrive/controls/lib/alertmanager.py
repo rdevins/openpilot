@@ -6,12 +6,11 @@ import copy
 
 # Priority
 class Priority:
+  HIGHEST = 4
+  HIGH = 3
+  MID = 2
+  LOW = 1
   LOWEST = 0
-  LOW_LOWEST = 1
-  LOW = 2
-  MID = 3
-  HIGH = 4
-  HIGHEST = 5
 
 AlertSize = log.Live100Data.AlertSize
 AlertStatus = log.Live100Data.AlertStatus
@@ -156,7 +155,7 @@ class AlertManager(object):
         "Be ready to take over at any time",
         "Always keep hands on wheel and eyes on road",
         AlertStatus.normal, AlertSize.mid,
-        Priority.LOW_LOWEST, None, None, 0., 0., 15.),
+        Priority.LOWEST, None, None, 0., 0., 15.),
 
     "ethicalDilemma": Alert(
         "TAKE CONTROL IMMEDIATELY",
@@ -181,12 +180,6 @@ class AlertManager(object):
         "Press Resume to Move",
         AlertStatus.userPrompt, AlertSize.mid,
         Priority.LOW, None, None, 0., 0., .2),
-
-    "belowSteerSpeed": Alert(
-        "TAKE CONTROL",
-        "Steer Unavailable Below ",
-        AlertStatus.userPrompt, AlertSize.mid,
-        Priority.MID, "steerRequired", None, 0., 0., .1),
 
     "debugAlert": Alert(
         "DEBUG ALERT",
@@ -243,12 +236,6 @@ class AlertManager(object):
         AlertStatus.normal, AlertSize.mid,
         Priority.LOW, None, "chimeDouble", .4, 2., 3.),
 
-    "lowBatteryNoEntry": Alert(
-        "openpilot Unavailable",
-        "Low Battery",
-        AlertStatus.normal, AlertSize.mid,
-        Priority.LOW, None, "chimeDouble", .4, 2., 3.),
-
     # Cancellation alerts causing soft disabling
     "overheat": Alert(
         "TAKE CONTROL IMMEDIATELY",
@@ -268,7 +255,7 @@ class AlertManager(object):
         AlertStatus.critical, AlertSize.full,
         Priority.MID, "steerRequired", "chimeRepeated", 1., 3., 3.),
 
-    "calibrationIncomplete": Alert(
+    "calibrationInProgress": Alert(
         "TAKE CONTROL IMMEDIATELY",
         "Calibration in Progress",
         AlertStatus.critical, AlertSize.full,
@@ -289,12 +276,6 @@ class AlertManager(object):
     "espDisabled": Alert(
         "TAKE CONTROL IMMEDIATELY",
         "ESP Off",
-        AlertStatus.critical, AlertSize.full,
-        Priority.MID, "steerRequired", "chimeRepeated", 1., 3., 3.),
-
-    "lowBattery": Alert(
-        "TAKE CONTROL IMMEDIATELY",
-        "Low Battery",
         AlertStatus.critical, AlertSize.full,
         Priority.MID, "steerRequired", "chimeRepeated", 1., 3., 3.),
 
@@ -337,13 +318,13 @@ class AlertManager(object):
 
     "steerUnavailable": Alert(
         "TAKE CONTROL IMMEDIATELY",
-        "LKAS Fault: Restart the Car",
+        "Steer Fault: Restart the Car",
         AlertStatus.critical, AlertSize.full,
         Priority.HIGHEST, "steerRequired", "chimeRepeated", 1., 3., 4.),
 
     "brakeUnavailable": Alert(
         "TAKE CONTROL IMMEDIATELY",
-        "Cruise Fault: Restart the Car",
+        "Brake Fault: Restart the Car",
         AlertStatus.critical, AlertSize.full,
         Priority.HIGHEST, "steerRequired", "chimeRepeated", 1., 3., 4.),
 
@@ -403,7 +384,7 @@ class AlertManager(object):
         AlertStatus.normal, AlertSize.mid,
         Priority.LOW, None, "chimeDouble", .4, 2., 3.),
 
-    "calibrationIncompleteNoEntry": Alert(
+    "calibrationInProgressNoEntry": Alert(
         "openpilot Unavailable",
         "Calibration in Progress",
         AlertStatus.normal, AlertSize.mid,
@@ -465,13 +446,13 @@ class AlertManager(object):
 
     "steerUnavailableNoEntry": Alert(
         "openpilot Unavailable",
-        "LKAS Fault: Restart the Car",
+        "Steer Fault: Restart the Car",
         AlertStatus.normal, AlertSize.mid,
         Priority.LOW, None, "chimeDouble", .4, 2., 3.),
 
     "brakeUnavailableNoEntry": Alert(
         "openpilot Unavailable",
-        "Cruise Fault: Restart the Car",
+        "Brake Fault: Restart the Car",
         AlertStatus.normal, AlertSize.mid,
         Priority.LOW, None, "chimeDouble", .4, 2., 3.),
 
@@ -505,29 +486,23 @@ class AlertManager(object):
         AlertStatus.normal, AlertSize.mid,
         Priority.LOW, None, "chimeDouble", .4, 2., 3.),
 
-    # permanent alerts
+    # permanent alerts to display on small UI upper box
     "steerUnavailablePermanent": Alert(
-        "LKAS Fault: Restart the car to engage",
+        "STEER FAULT: Restart the car to engage",
         "",
         AlertStatus.normal, AlertSize.small,
-        Priority.LOW_LOWEST, None, None, 0., 0., .2),
+        Priority.LOWEST, None, None, 0., 0., .2),
 
     "brakeUnavailablePermanent": Alert(
-        "Cruise Fault: Restart the car to engage",
+        "BRAKE FAULT: Restart the car to engage",
         "",
         AlertStatus.normal, AlertSize.small,
-        Priority.LOW_LOWEST, None, None, 0., 0., .2),
+        Priority.LOWEST, None, None, 0., 0., .2),
 
     "lowSpeedLockoutPermanent": Alert(
-        "Cruise Fault: Restart the car to engage",
+        "CRUISE FAULT: Restart the car to engage",
         "",
         AlertStatus.normal, AlertSize.small,
-        Priority.LOW_LOWEST, None, None, 0., 0., .2),
-
-    "calibrationIncompletePermanent": Alert(
-        "Calibration in Progress: ",
-        "Drive Above ",
-        AlertStatus.normal, AlertSize.mid,
         Priority.LOWEST, None, None, 0., 0., .2),
   }
 
@@ -537,11 +512,10 @@ class AlertManager(object):
   def alertPresent(self):
     return len(self.activealerts) > 0
 
-  def add(self, alert_type, enabled=True, extra_text_1='', extra_text_2=''):
+  def add(self, alert_type, enabled=True, extra_text=''):
     alert_type = str(alert_type)
     added_alert = copy.copy(self.alerts[alert_type])
-    added_alert.alert_text_1 += extra_text_1
-    added_alert.alert_text_2 += extra_text_2
+    added_alert.alert_text_2 += extra_text
     added_alert.start_time = sec_since_boot()
 
     # if new alert is higher priority, log it
